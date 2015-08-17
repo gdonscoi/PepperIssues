@@ -1,4 +1,4 @@
-package net.caiena.github;
+package net.caiena.github.Util;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;

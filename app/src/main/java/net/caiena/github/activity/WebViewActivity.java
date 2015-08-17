@@ -1,45 +1,38 @@
-package net.caiena.github;
+package net.caiena.github.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.CookieManager;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.google.gson.JsonObject;
+
+import net.caiena.github.Util.Constantes;
+import net.caiena.github.Util.GenericRequest;
+import net.caiena.github.R;
 
 import java.util.HashMap;
 
-public class WebViewActivity extends AppCompatActivity {
+public class WebViewActivity extends BaseActivity {
 
-    private WebView webView;
-    public static RequestQueue requestQueue;
-    public static String accessToken;
-    private Context context;
+    private String accessCode = "";
+    private final String accessCodeFragment = "code=";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        context = this;
-        requestQueue = Volley.newRequestQueue(this);
-
-
-        CookieManager.getInstance().setAcceptCookie(true);
-        webView = (WebView) findViewById(R.id.webView);
+        final WebView webView = (WebView) findViewById(R.id.webView);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -48,26 +41,28 @@ public class WebViewActivity extends AppCompatActivity {
             }
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                String accessCodeFragment = "code=";
 
-                // We hijack the GET request to extract the OAuth parameters
 
-                if (url.contains(accessCodeFragment)) {
-                    String accessCode = url.substring(url.indexOf(accessCodeFragment));
+                if (url.contains(accessCodeFragment) && accessCode.equals("")) {
+                    accessCode = url.substring(url.indexOf(accessCodeFragment));
                     HashMap<String, String> params = new HashMap<>();
-                    params.put("client_id", "75138c0316d81f593c13");
-                    params.put("client_secret", "ab8412ede76a1e19d7a23e8f7992f7705207e2b6");
+                    params.put("client_id", Constantes.CLIENT_ID);
+                    params.put("client_secret", Constantes.CLIENT_SECRET);
                     params.put("code", accessCode.substring(5));
                     params.put("Content-Type", "application/json");
                     params.put("Accept", "application/json");
 
-                    GenericRequest<JsonObject> a = new GenericRequest<>(Request.Method.POST, "https://github.com/login/oauth/access_token", JsonObject.class, params, new Response.Listener<JsonObject>() {
+                    GenericRequest<JsonObject> a = new GenericRequest<>(Request.Method.POST, Constantes.URL_GITHUB.concat(Constantes.URL_ACESS_TOKEN), JsonObject.class, params, new Response.Listener<JsonObject>() {
                         @Override
                         public void onResponse(JsonObject response) {
                             Log.i("Response", response.toString());
-                            accessToken = response.get("access_token").toString().replaceAll("\"", "");
-                            Intent i = new Intent(context, MainActivity.class);
-                            context.startActivity(i);
+                            String accessToken = response.get("access_token").toString().replaceAll("\"", "");
+
+                            Intent requestIntent = new Intent();
+                            requestIntent.putExtra("access_token", accessToken);
+
+                            setResult(accessToken.trim().equals("") ? RESULT_CANCELED : RESULT_OK, requestIntent);
+                            finish();
                         }
                     }, new Response.ErrorListener() {
                         @Override
@@ -77,6 +72,7 @@ public class WebViewActivity extends AppCompatActivity {
                     }, params);
                     requestQueue.add(a);
 
+                    webView.setVisibility(View.GONE);
                 }
 
             }
@@ -84,9 +80,7 @@ public class WebViewActivity extends AppCompatActivity {
         });
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-
-        String url = "https://github.com/login/oauth/authorize?client_id=75138c0316d81f593c13&scope=repo";
-        webView.loadUrl(url);
+        webView.loadUrl(Constantes.URL_GITHUB.concat(Constantes.URL_AUTH));
     }
 
     @Override
