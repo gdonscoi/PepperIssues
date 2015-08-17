@@ -52,7 +52,7 @@ public class WebViewActivity extends BaseActivity {
                     params.put("Content-Type", "application/json");
                     params.put("Accept", "application/json");
 
-                    GenericRequest<JsonObject> a = new GenericRequest<>(Request.Method.POST, Constantes.URL_GITHUB.concat(Constantes.URL_ACESS_TOKEN), JsonObject.class, params, new Response.Listener<JsonObject>() {
+                    GenericRequest<JsonObject> a = new GenericRequest<>(Request.Method.POST, Constantes.URL_ACESS_TOKEN, JsonObject.class, params, new Response.Listener<JsonObject>() {
                         @Override
                         public void onResponse(JsonObject response) {
                             Log.i("Response", response.toString());
@@ -80,7 +80,7 @@ public class WebViewActivity extends BaseActivity {
         });
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webView.loadUrl(Constantes.URL_GITHUB.concat(Constantes.URL_AUTH));
+        webView.loadUrl(Constantes.URL_AUTH);
     }
 
     @Override
