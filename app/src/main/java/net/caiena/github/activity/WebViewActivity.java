@@ -33,6 +33,8 @@ public class WebViewActivity extends BaseActivity {
         setContentView(R.layout.activity_web_view);
 
         final WebView webView = (WebView) findViewById(R.id.webView);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -41,7 +43,6 @@ public class WebViewActivity extends BaseActivity {
             }
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
 
                 if (url.contains(accessCodeFragment) && accessCode.equals("")) {
                     accessCode = url.substring(url.indexOf(accessCodeFragment));
@@ -52,7 +53,7 @@ public class WebViewActivity extends BaseActivity {
                     params.put("Content-Type", "application/json");
                     params.put("Accept", "application/json");
 
-                    GenericRequest<JsonObject> a = new GenericRequest<>(Request.Method.POST, Constantes.URL_ACESS_TOKEN, JsonObject.class, params, new Response.Listener<JsonObject>() {
+                    GenericRequest<JsonObject> requestAcceeToken = new GenericRequest<>(Request.Method.POST, Constantes.URL_ACESS_TOKEN, JsonObject.class, params, new Response.Listener<JsonObject>() {
                         @Override
                         public void onResponse(JsonObject response) {
                             Log.i("Response", response.toString());
@@ -70,16 +71,14 @@ public class WebViewActivity extends BaseActivity {
                             Log.i("Response", error.getMessage());
                         }
                     }, params);
-                    requestQueue.add(a);
-
+                    requestQueue.add(requestAcceeToken);
                     webView.setVisibility(View.GONE);
                 }
 
             }
 
         });
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+
         webView.loadUrl(Constantes.URL_AUTH);
     }
 

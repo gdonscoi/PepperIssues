@@ -12,10 +12,13 @@ import com.android.volley.toolbox.Volley;
 import net.caiena.github.R;
 import net.caiena.github.Util.Constantes;
 
+import java.util.HashMap;
+
 public class BaseActivity extends AppCompatActivity {
 
     private SharedPreferences prefUsuario;
-    public RequestQueue requestQueue;
+    public static RequestQueue requestQueue;
+    public static HashMap<String, String> params;
     public String access_token = "";
 
     @Override
@@ -24,6 +27,12 @@ public class BaseActivity extends AppCompatActivity {
         prefUsuario = getSharedPreferences(Constantes.SHAREDPREFERENCE_AUTH, 0);
         if (requestQueue == null)
             requestQueue = Volley.newRequestQueue(this);
+        if(params == null){
+            params = new HashMap<>();
+            params.put("Accept", "application/vnd.github.v3.full+json");
+            params.put("charset", "utf-8");
+        }
+
     }
 
     @Override

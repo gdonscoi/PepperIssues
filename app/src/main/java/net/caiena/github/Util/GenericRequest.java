@@ -197,7 +197,7 @@ public class GenericRequest<T> extends JsonRequest<T> {
             }
         } else if (hasModel) {
             try {
-                String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                String json = new String(response.data, "utf-8");
                 T parsedObject = gson.fromJson(json, typeJsonConverter);
                 return Response.success(parsedObject, HttpHeaderParser.parseCacheHeaders(response));
             } catch (UnsupportedEncodingException e) {
@@ -208,7 +208,7 @@ public class GenericRequest<T> extends JsonRequest<T> {
         } else {
             try {
                 // If it's not muted; we just need to create our POJO from the returned JSON and handle correctly the errors
-                String json = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                String json = new String(response.data, "utf-8");
                 T parsedObject = gson.fromJson(json, clazz);
                 return Response.success(parsedObject, HttpHeaderParser.parseCacheHeaders(response));
             } catch (UnsupportedEncodingException e) {
