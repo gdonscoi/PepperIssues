@@ -1,14 +1,12 @@
 package net.caiena.github.activity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import net.caiena.github.R;
-import net.caiena.github.Util.Constantes;
+import net.caiena.github.Util.UpdateController;
 
 public class SplashScreen extends BaseActivity {
 
@@ -19,13 +17,14 @@ public class SplashScreen extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if(!getAcessToken().trim().equals("")){
-            Intent intentWebView = new Intent(SplashScreen.this,MainActivity.class);
+        if (!getAcessToken().trim().equals("")) {
+//            Intent intentWebView = new Intent(SplashScreen.this,MainActivity.class);
+            Intent intentWebView = new Intent(SplashScreen.this, UpdateActivity.class);
             startActivity(intentWebView);
             return;
         }
 
-        Intent intentWebView = new Intent(SplashScreen.this,WebViewActivity.class);
+        Intent intentWebView = new Intent(SplashScreen.this, WebViewActivity.class);
         startActivityForResult(intentWebView, WEBVIEW_ACTIVITY_REQUEST);
     }
 
@@ -56,9 +55,9 @@ public class SplashScreen extends BaseActivity {
         if (requestCode == WEBVIEW_ACTIVITY_REQUEST) {
             if (resultCode == RESULT_OK) {
                 setAcessToken(data.getStringExtra("access_token"));
-                Intent intentWebView = new Intent(SplashScreen.this,MainActivity.class);
+                Intent intentWebView = new Intent(SplashScreen.this, UpdateActivity.class);
                 startActivity(intentWebView);
-            } else if(resultCode == RESULT_CANCELED) {
+            } else if (resultCode == RESULT_CANCELED) {
                 Intent intentWebView = new Intent(SplashScreen.this, WebViewActivity.class);
                 startActivityForResult(intentWebView, WEBVIEW_ACTIVITY_REQUEST);
             }

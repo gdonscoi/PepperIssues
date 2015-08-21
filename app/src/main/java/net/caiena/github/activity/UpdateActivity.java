@@ -1,14 +1,15 @@
 package net.caiena.github.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
 import net.caiena.github.R;
+import net.caiena.github.Util.ActivityProgressUpdatable;
+import net.caiena.github.Util.UpdateController;
 
-public class UpdateActivity extends AppCompatActivity {
+public class UpdateActivity extends BaseActivity implements ActivityProgressUpdatable {
 
     private ProgressBar progressBar;
 
@@ -18,12 +19,24 @@ public class UpdateActivity extends AppCompatActivity {
         setContentView(R.layout.activity_update);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
         progressBar.setIndeterminate(true);
         progressBar.setProgress(0);
 
+        UpdateController updateController = new UpdateController();
+        updateController.setCallback(this);
+        updateController.doUpdate(getAcessToken());
 
+    }
 
+    @Override
+    public void updateProgressBar(final int progress) {
+        UpdateActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progressBar != null)
+                    progressBar.incrementProgressBy(progress);
+            }
+        });
     }
 
     @Override
@@ -47,4 +60,5 @@ public class UpdateActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 }
