@@ -11,6 +11,7 @@ import com.j256.ormlite.table.TableUtils;
 
 import net.caiena.github.model.bean.IEntidade;
 import net.caiena.github.model.bean.Issue;
+import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
 import net.caiena.github.model.bean.Milestone;
 import net.caiena.github.model.bean.Repository;
@@ -26,7 +27,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_FILE_NAME = "pepperissues";
 
     // versao do banco - qualquer alteracao de banco incremente no valor
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     private Map<Class, Dao<IEntidade, Object>> daos = new HashMap<>();
 
@@ -43,12 +44,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Issue.class);
             Log.i(DatabaseHelper.class.getName(), "Create table Label");
             TableUtils.createTable(connectionSource, Label.class);
-//            Log.i(DatabaseHelper.class.getName(), "Create table Milestone");
-//            TableUtils.createTable(connectionSource, Milestone.class);
             Log.i(DatabaseHelper.class.getName(), "Create table Repository");
             TableUtils.createTable(connectionSource, Repository.class);
             Log.i(DatabaseHelper.class.getName(), "Create table User");
             TableUtils.createTable(connectionSource, User.class);
+            Log.i(DatabaseHelper.class.getName(), "Create table IssueLabel");
+            TableUtils.createTable(connectionSource, IssueLabel.class);
 
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
@@ -64,12 +65,12 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Issue.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table Label");
             TableUtils.dropTable(connectionSource, Label.class, true);
-//            Log.i(DatabaseHelper.class.getName(), "Update table Milestone");
-//            TableUtils.dropTable(connectionSource, Milestone.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table Repository");
             TableUtils.dropTable(connectionSource, Repository.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table User");
             TableUtils.dropTable(connectionSource, User.class, true);
+            Log.i(DatabaseHelper.class.getName(), "Update table IssueLabel");
+            TableUtils.dropTable(connectionSource, IssueLabel.class, true);
 
             onCreate(db, connectionSource);
         } catch (android.database.SQLException | SQLException e) {

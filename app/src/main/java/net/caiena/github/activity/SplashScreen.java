@@ -7,6 +7,8 @@ import android.view.MenuItem;
 
 import net.caiena.github.R;
 import net.caiena.github.Util.UpdateController;
+import net.caiena.github.model.DAO.IssueLabelDAO;
+import net.caiena.github.model.DAO.RepositoryDAO;
 
 public class SplashScreen extends BaseActivity {
 
@@ -16,6 +18,9 @@ public class SplashScreen extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        RepositoryDAO repositoryDAO = RepositoryDAO.getInstance(this);
+        IssueLabelDAO issueLabelDAO = IssueLabelDAO.getInstance(this);
 
         if (!getAcessToken().trim().equals("")) {
 //            Intent intentWebView = new Intent(SplashScreen.this,MainActivity.class);

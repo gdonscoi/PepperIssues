@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class IssueLabel implements IEntidade, Serializable {
 
     @DatabaseField(generatedId = true)
-    public String id;
+    public int id;
 
     @DatabaseField(columnName = "issue_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
     public Issue issue;
