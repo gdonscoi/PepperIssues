@@ -5,5 +5,5 @@ import android.support.annotation.UiThread;
 public interface ActivityProgressUpdatable {
 
     @UiThread
-    void updateProgressBar(final int progress);
+    void updateProgressBar(final int progress,final int max);
 }

@@ -12,7 +12,7 @@ import java.util.Collection;
 @DatabaseTable(tableName = "repository")
 public class Repository implements IEntidade , Serializable {
 
-    @DatabaseField(generatedId = true)
+    @DatabaseField(id = true)
     public int id;
 
     @DatabaseField

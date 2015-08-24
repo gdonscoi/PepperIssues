@@ -17,4 +17,7 @@ public class IssueLabel implements IEntidade, Serializable {
     @DatabaseField(columnName = "label_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
     public Label label;
 
+    @DatabaseField(columnName = "repository_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
+    public Repository repository;
+
 }

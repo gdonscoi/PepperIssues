@@ -8,14 +8,11 @@ import java.io.Serializable;
 @DatabaseTable(tableName = "label")
 public class Label implements IEntidade, Serializable {
 
-    @DatabaseField(generatedId = true)
-    public int id;
+    @DatabaseField(id = true)
+    public String url;
 
     @DatabaseField(columnName = "repository_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
     public Repository repository;
-
-    @DatabaseField
-    public String url;
 
     @DatabaseField
     public String name;

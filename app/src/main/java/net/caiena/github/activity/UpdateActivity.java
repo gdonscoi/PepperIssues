@@ -20,21 +20,23 @@ public class UpdateActivity extends BaseActivity implements ActivityProgressUpda
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
-        progressBar.setProgress(0);
 
-        UpdateController updateController = new UpdateController();
+        UpdateController updateController = new UpdateController(getAcessToken(),progressBar,this);
         updateController.setCallback(this);
-        updateController.doUpdate(getAcessToken());
+        updateController.execute();
 
     }
 
     @Override
-    public void updateProgressBar(final int progress) {
+    public void updateProgressBar(final int progress,final int max) {
         UpdateActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (progressBar != null)
+                if (progressBar != null) {
+                    progressBar.setMax(max);
+                    progressBar.setIndeterminate(false);
                     progressBar.incrementProgressBy(progress);
+                }
             }
         });
     }

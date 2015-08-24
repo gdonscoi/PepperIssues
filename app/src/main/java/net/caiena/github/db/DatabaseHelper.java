@@ -43,8 +43,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Issue.class);
             Log.i(DatabaseHelper.class.getName(), "Create table Label");
             TableUtils.createTable(connectionSource, Label.class);
-            Log.i(DatabaseHelper.class.getName(), "Create table Milestone");
-            TableUtils.createTable(connectionSource, Milestone.class);
+//            Log.i(DatabaseHelper.class.getName(), "Create table Milestone");
+//            TableUtils.createTable(connectionSource, Milestone.class);
             Log.i(DatabaseHelper.class.getName(), "Create table Repository");
             TableUtils.createTable(connectionSource, Repository.class);
             Log.i(DatabaseHelper.class.getName(), "Create table User");
@@ -64,8 +64,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, Issue.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table Label");
             TableUtils.dropTable(connectionSource, Label.class, true);
-            Log.i(DatabaseHelper.class.getName(), "Update table Milestone");
-            TableUtils.dropTable(connectionSource, Milestone.class, true);
+//            Log.i(DatabaseHelper.class.getName(), "Update table Milestone");
+//            TableUtils.dropTable(connectionSource, Milestone.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table Repository");
             TableUtils.dropTable(connectionSource, Repository.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table User");

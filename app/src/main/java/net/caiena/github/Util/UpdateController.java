@@ -1,10 +1,36 @@
 package net.caiena.github.Util;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.widget.ProgressBar;
+
+import net.caiena.github.GitHubController;
+import net.caiena.github.model.DAO.IssueDAO;
+import net.caiena.github.model.DAO.IssueLabelDAO;
+import net.caiena.github.model.DAO.LabelDAO;
+import net.caiena.github.model.DAO.RepositoryDAO;
+import net.caiena.github.model.bean.Issue;
+import net.caiena.github.model.bean.IssueLabel;
+import net.caiena.github.model.bean.Label;
+import net.caiena.github.model.bean.Milestone;
+import net.caiena.github.model.bean.Repository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 
+    private String accessToken;
+    private ProgressBar progressBar;
     private ActivityProgressUpdatable callbackProgressBarActivity;
+    private Context context;
+
+    public UpdateController(String accessToken, ProgressBar progressBar, Context context) {
+        this.accessToken = accessToken;
+        this.progressBar = progressBar;
+        this.context = context;
+    }
 
     public void setCallback(ActivityProgressUpdatable callback) {
         this.callbackProgressBarActivity = callback;
@@ -12,21 +38,75 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 
     @Override
     protected void onPreExecute() {
-
+        progressBar.setProgress(0);
     }
 
     @Override
     protected Boolean doInBackground(String... params) {
+        GitHubController gitHubController = new GitHubController(accessToken);
+        SQLiteDatabase db = null;
+        try {
+            ArrayList<Repository> repositories = gitHubController.getRepositories();
+            ArrayList<Issue> issues = new ArrayList<>();
+            ArrayList<IssueLabel> issueLabels = new ArrayList<>();
+            int sizeRepositories = repositories.size();
+            ArrayList<Issue> issuesGitHub = new ArrayList<>();
+            HashMap<String, Label> labelHashMap = new HashMap<>();
+
+            for (Repository repository : repositories) {
+                ArrayList<Milestone> milestones = gitHubController.getMilestones(repository.owner.login, repository.name);
+
+                for (Milestone milestone : milestones) {
+                    if (milestone.title.toLowerCase().equals("backlog") || milestone.title.toLowerCase().equals("product backlog")) {
+                        IssueLabel issueLabel;
+
+                        issuesGitHub.addAll(gitHubController.getIssues(repository.owner.login, repository.name, milestone.number));
+                        for (Issue issue : issuesGitHub) {
+                            issue.repository = repository;
+                            issue.nameMilestone = milestone.title;
+
+                            for (Label label : issue.labels) {
+                                issueLabel = new IssueLabel();
+                                issueLabel.issue = issue;
+                                issueLabel.label = label;
+                                issueLabel.repository = repository;
+
+                                labelHashMap.put(label.url, label);
+                                issueLabels.add(issueLabel);
+                            }
+                        }
+                        issues.addAll(issuesGitHub);
+                    }
+                }
+
+                publishProgress(1, sizeRepositories);
+            }
+            db = RepositoryDAO.getInstance(context).getConnectionDataBase();
+            db.beginTransaction();
+
+            RepositoryDAO.getInstance(context).createOrUpdate(repositories);
+            IssueDAO.getInstance(context).createOrUpdate(issues);
+            LabelDAO.getInstance(context).createOrUpdate(new ArrayList<>(labelHashMap.values()));
+            IssueLabelDAO.getInstance(context).createOrUpdate(issueLabels);
+
+            db.setTransactionSuccessful();
 
 
-
-        publishProgress(1);
-        return null;
+        } catch (Exception e) {
+            return null;
+        } catch (Throwable throwable) {
+            return null;
+        } finally {
+            if (db != null) {
+                db.endTransaction();
+            }
+        }
+        return true;
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        callbackProgressBarActivity.updateProgressBar(values[0]);
+        callbackProgressBarActivity.updateProgressBar(values[0], values[1]);
     }
 
     @Override
