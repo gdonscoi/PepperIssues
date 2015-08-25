@@ -40,8 +40,10 @@ public class Repository implements IEntidade , Serializable {
     @DatabaseField
     public String url;
 
-    @DatabaseField(columnName = "user_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
     public User owner;
+
+    @DatabaseField
+    public String ownerLogin;
 
     @ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 1)
     public Collection<Issue> issues = new ArrayList<>();

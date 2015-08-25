@@ -37,7 +37,9 @@
         </activity>
         <activity
             android:name=".activity.UpdateActivity"
-            android:label="@string/title_activity_update" >
+            android:label="@string/title_activity_update"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
     </application>
 

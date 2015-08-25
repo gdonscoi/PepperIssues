@@ -16,9 +16,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.JsonObject;
 
+import net.caiena.github.R;
 import net.caiena.github.Util.Constantes;
 import net.caiena.github.Util.GenericRequest;
-import net.caiena.github.R;
 
 import java.util.HashMap;
 
@@ -68,7 +68,9 @@ public class WebViewActivity extends BaseActivity {
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Log.i("Response", error.getMessage());
+                            Intent intentWebView = new Intent(WebViewActivity.this, SplashScreen.class);
+                            startActivity(intentWebView);
+                            finish();
                         }
                     }, params);
                     requestQueue.add(requestAcceeToken);

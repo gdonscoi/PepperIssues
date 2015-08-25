@@ -1,20 +1,26 @@
 package net.caiena.github.Util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.widget.ProgressBar;
 
 import net.caiena.github.GitHubController;
+import net.caiena.github.activity.MainActivity;
+import net.caiena.github.activity.SplashScreen;
+import net.caiena.github.activity.UpdateActivity;
 import net.caiena.github.model.DAO.IssueDAO;
 import net.caiena.github.model.DAO.IssueLabelDAO;
 import net.caiena.github.model.DAO.LabelDAO;
 import net.caiena.github.model.DAO.RepositoryDAO;
+import net.caiena.github.model.DAO.UserDAO;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
 import net.caiena.github.model.bean.Milestone;
 import net.caiena.github.model.bean.Repository;
+import net.caiena.github.model.bean.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +29,11 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 
     private String accessToken;
     private ProgressBar progressBar;
-    private ActivityProgressUpdatable callbackProgressBarActivity;
+    private ActivityUpdatable callbackProgressBarActivity;
     private Context context;
+    private User user;
+    public static final int TYPE_UPDATE_PROGRESS_BAR = 1;
+    public static final int TYPE_UPDATE_AVATAR = 2;
 
     public UpdateController(String accessToken, ProgressBar progressBar, Context context) {
         this.accessToken = accessToken;
@@ -32,7 +41,7 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
         this.context = context;
     }
 
-    public void setCallback(ActivityProgressUpdatable callback) {
+    public void setCallback(ActivityUpdatable callback) {
         this.callbackProgressBarActivity = callback;
     }
 
@@ -46,6 +55,10 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
         GitHubController gitHubController = new GitHubController(accessToken);
         SQLiteDatabase db = null;
         try {
+            user = gitHubController.getUser();
+            user.setAvatar(gitHubController.getAvatarUser(user.avatarUrl));
+            publishProgress(TYPE_UPDATE_AVATAR);
+
             ArrayList<Repository> repositories = gitHubController.getRepositories();
             ArrayList<Issue> issues = new ArrayList<>();
             ArrayList<IssueLabel> issueLabels = new ArrayList<>();
@@ -54,13 +67,14 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
             HashMap<String, Label> labelHashMap = new HashMap<>();
 
             for (Repository repository : repositories) {
-                ArrayList<Milestone> milestones = gitHubController.getMilestones(repository.owner.login, repository.name);
+                repository.ownerLogin = repository.owner.login;
+                ArrayList<Milestone> milestones = gitHubController.getMilestones(repository.ownerLogin, repository.name);
 
                 for (Milestone milestone : milestones) {
                     if (milestone.title.toLowerCase().equals("backlog") || milestone.title.toLowerCase().equals("product backlog")) {
                         IssueLabel issueLabel;
 
-                        issuesGitHub.addAll(gitHubController.getIssues(repository.owner.login, repository.name, milestone.number));
+                        issuesGitHub.addAll(gitHubController.getIssues(repository.ownerLogin, repository.name, milestone.number));
                         for (Issue issue : issuesGitHub) {
                             issue.repository = repository;
                             issue.nameMilestone = milestone.title;
@@ -79,11 +93,12 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
                     }
                 }
 
-                publishProgress(1, sizeRepositories);
+                publishProgress(TYPE_UPDATE_PROGRESS_BAR, 1, sizeRepositories);
             }
             db = RepositoryDAO.getInstance(context).getConnectionDataBase();
             db.beginTransaction();
 
+            UserDAO.getInstance(context).createOrUpdate(user);
             RepositoryDAO.getInstance(context).createOrUpdate(repositories);
             IssueDAO.getInstance(context).createOrUpdate(issues);
             LabelDAO.getInstance(context).createOrUpdate(new ArrayList<>(labelHashMap.values()));
@@ -106,120 +121,22 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 
     @Override
     protected void onProgressUpdate(Integer... values) {
-        callbackProgressBarActivity.updateProgressBar(values[0], values[1]);
+        if (values[0] == TYPE_UPDATE_PROGRESS_BAR) {
+            callbackProgressBarActivity.updateProgressBar(values[1], values[2]);
+        }else if (values[0] == TYPE_UPDATE_AVATAR) {
+            callbackProgressBarActivity.updateInfoActivity(user.getCircularAvatar(),user.name,user.html);
+        }
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
-
+        if(result == null) {
+            callbackProgressBarActivity.updateError();
+            return;
+        }
+        Intent intentWebView = new Intent(context, MainActivity.class);
+        context.startActivity(intentWebView);
+        ((UpdateActivity)context).finish();
     }
 
 }
-
-//    public void doUpdate(final ProgressBar progressBar) {
-//
-//        repositories = new ArrayList<>();
-//
-//        final Type milestoneType = new TypeToken<List<Milestone>>() {
-//        }.getType();
-//        final Type issueType = new TypeToken<List<Issue>>() {
-//        }.getType();
-//        Type repositoryType = new TypeToken<List<Repository>>() {
-//        }.getType();
-//        // Request para obter repositorios
-//
-//        GenericRequest<ArrayList<Repository>> requestRepositories = new GenericRequest<>(Constantes.URL_API_REPOSITORIES.concat(accessToken), repositoryType, new Response.Listener<ArrayList<Repository>>() {
-//            @Override
-//            public void onResponse(ArrayList<Repository> response) {
-//                repositories.addAll(response);
-//
-//                ((UpdateActivity)context).runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        progressBar.setIndeterminate(false);
-//                        progressBar.setMax(repositories.size());
-//                        progressBar.setProgress(0);
-//                    }
-//                });
-//
-////                for (int i = 0; i < countRepo; i++) {
-////                    final int indiceRepo = i;
-////                    // Request para obter Milestones
-////                    requestQueue.add(new GenericRequest<>(Constantes.URL_API_REPOS
-////                            .concat(repositories.get(i).owner.login)
-////                            .concat("/")
-////                            .concat(repositories.get(i).name)
-////                            .concat(Constantes.URL_API_MILESTONE)
-////                            .concat(accessToken), milestoneType, new Response.Listener<ArrayList<Milestone>>() {
-////                        @Override
-////                        public void onResponse(ArrayList<Milestone> response) {
-////                            for (Milestone milestone : response)
-////                                if (milestone.title.toLowerCase().equals("backlog") || milestone.title.toLowerCase().equals("product backlog")) {
-////                                    requestQueue.add(new GenericRequest<>(Constantes.URL_API_REPOS
-////                                            .concat(repositories.get(indiceRepo).owner.login)
-////                                            .concat("/")
-////                                            .concat(repositories.get(indiceRepo).name)
-////                                            .concat(Constantes.URL_API_ISSUES)
-////                                            .concat(accessToken
-////                                                    .concat("&milestone=")
-////                                                    .concat(String.valueOf(milestone.number))
-////                                                    .concat("&labels=feature")), issueType, new Response.Listener<ArrayList<Issue>>() {
-////                                        @Override
-////                                        public void onResponse(ArrayList<Issue> response) {
-////                                            repositories.get(indiceRepo).issues.addAll(response);
-////                                        }
-////                                    }, new Response.ErrorListener() {
-////                                        @Override
-////                                        public void onErrorResponse(VolleyError error) {
-////                                            Log.i("Response", error.getMessage());
-////                                        }
-////                                    }, params, true));
-////
-////                                    break;
-////                                }
-////
-////                            progressBar.incrementProgressBy(1);
-////                        }
-////                    }, new Response.ErrorListener() {
-////                        @Override
-////                        public void onErrorResponse(VolleyError error) {
-////                            Log.i("Response", error.getMessage());
-////                        }
-////                    }, params, true));
-////                }
-//
-//                SQLiteDatabase db = null;
-//                try {
-//                    db = RepositoryDAO.getInstance(context).getConnectionDataBase();
-//                    db.beginTransaction();
-//
-//                    for (Repository repository:repositories){
-//                        RepositoryDAO.getInstance(context).createOrUpdate(repository);
-//                        ((UpdateActivity)context).runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                progressBar.incrementProgressBy(1);
-//                                progressBar.invalidate();
-//                            }
-//                        });
-//                    }
-//
-//                    db.setTransactionSuccessful();
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }finally {
-//                    if (db != null) {
-//                        db.endTransaction();
-//                    }
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.i("Response", error.getMessage());
-//            }
-//        }, params, true);
-//
-//
-//        requestQueue.add(requestRepositories);
-//    }

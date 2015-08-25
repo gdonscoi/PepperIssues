@@ -1,34 +1,66 @@
 package net.caiena.github.activity;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.content.ContextCompat;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.caiena.github.R;
-import net.caiena.github.Util.ActivityProgressUpdatable;
+import net.caiena.github.Util.ActivityUpdatable;
 import net.caiena.github.Util.UpdateController;
 
-public class UpdateActivity extends BaseActivity implements ActivityProgressUpdatable {
+public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
 
     private ProgressBar progressBar;
+    private TextView titleText;
+    private ImageView avatar;
+    private TextView textName;
+    private TextView textHtml;
+    private Animation fadeInAnimation;
+    private Context context;
+    private UpdateController updateController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
+        context = this;
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
 
-        UpdateController updateController = new UpdateController(getAcessToken(),progressBar,this);
+        titleText = (TextView) findViewById(R.id.text_title_update);
+        titleText.setText(context.getString(R.string.tile_text_update));
+        titleText.setTextColor(Color.parseColor("#ffffff"));
+
+        avatar = (ImageView) findViewById(R.id.avatar);
+        avatar.setVisibility(View.GONE);
+        avatar.setOnClickListener(null);
+
+        textName = (TextView) findViewById(R.id.text_name);
+        textName.setVisibility(View.GONE);
+
+        textHtml = (TextView) findViewById(R.id.text_html);
+        textHtml.setVisibility(View.GONE);
+
+        fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+
+        updateController = new UpdateController(getAcessToken(), progressBar, this);
         updateController.setCallback(this);
         updateController.execute();
 
     }
 
     @Override
-    public void updateProgressBar(final int progress,final int max) {
+    public void updateProgressBar(final int progress, final int max) {
         UpdateActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -42,25 +74,49 @@ public class UpdateActivity extends BaseActivity implements ActivityProgressUpda
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_update, menu);
-        return true;
+    public void updateInfoActivity(final Bitmap circleBitmap, final String name, final String html) {
+        UpdateActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (circleBitmap != null) {
+                    avatar.setImageBitmap(circleBitmap);
+                    avatar.setVisibility(View.VISIBLE);
+                    avatar.startAnimation(fadeInAnimation);
+                }
+                if (!name.equals("")) {
+                    textName.setText(name);
+                    textName.setVisibility(View.VISIBLE);
+                    textName.startAnimation(fadeInAnimation);
+                }
+                if (!html.equals("")) {
+                    textHtml.setText(html);
+                    textHtml.setVisibility(View.VISIBLE);
+                    textHtml.startAnimation(fadeInAnimation);
+                }
+            }
+        });
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    public void updateError() {
+        titleText.setText("Erro ao sincronizar");
+        titleText.setTextColor(Color.parseColor("#c80900"));
+        titleText.startAnimation(fadeInAnimation);
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        Drawable imageButtonRefresh = ContextCompat.getDrawable(context, R.drawable.refresh_button);
+        avatar.setImageDrawable(imageButtonRefresh);
+        avatar.startAnimation(fadeInAnimation);
 
-        return super.onOptionsItemSelected(item);
+        avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(getIntent());
+            }
+        });
     }
 
+    @Override
+    public void onBackPressed() {
+    }
 }

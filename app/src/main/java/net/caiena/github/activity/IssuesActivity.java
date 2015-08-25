@@ -2,36 +2,32 @@ package net.caiena.github.activity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.google.gson.reflect.TypeToken;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import net.caiena.github.R;
-import net.caiena.github.Util.Constantes;
-import net.caiena.github.Util.GenericRequest;
 import net.caiena.github.adapter.AdapterIssues;
 import net.caiena.github.adapter.SpacesItemDecoration;
+import net.caiena.github.model.DAO.IssueLabelDAO;
 import net.caiena.github.model.bean.Issue;
-import net.caiena.github.model.bean.Milestone;
+import net.caiena.github.model.bean.IssueLabel;
+import net.caiena.github.model.bean.Label;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class IssuesActivity extends BaseActivity {
 
     private Context context;
     private RecyclerView listView;
     private ArrayList<Issue> issues;
-    private String nameRepository;
-    private String loginOwner;
-
+    private int idRepository;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +36,9 @@ public class IssuesActivity extends BaseActivity {
 
         this.context = this;
         Bundle extras = getIntent().getExtras();
-        nameRepository = extras.getString("repository");
-        loginOwner = extras.getString("owner");
+        idRepository = extras.getInt("repository");
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBarListIssue);
         listView = (RecyclerView) findViewById(R.id.recycleViewListIssues);
         listView.addItemDecoration(new SpacesItemDecoration(getResources()));
         listView.setHasFixedSize(true);
@@ -49,76 +46,44 @@ public class IssuesActivity extends BaseActivity {
         listView.setLayoutManager(mLayoutManager);
 
         issues = new ArrayList<>();
-
-        final Type issueType = new TypeToken<List<Issue>>() {}.getType();
-
-        final Type milestoneType = new TypeToken<List<Milestone>>() {}.getType();
-        GenericRequest<ArrayList<Milestone>> requestMilestone = new GenericRequest<>(Constantes.URL_API_REPOS
-                .concat(loginOwner != null ? loginOwner : "")
-                .concat("/")
-                .concat(nameRepository != null ? nameRepository : "")
-                .concat(Constantes.URL_API_MILESTONE)
-                .concat(getAcessToken()), milestoneType, new Response.Listener<ArrayList<Milestone>>() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onResponse(ArrayList<Milestone> response) {
-                for(Milestone milestone : response)
-                    if(milestone.title.toLowerCase().equals("backlog") || milestone.title.toLowerCase().equals("product backlog") ) {
+            public void run() {
+                try {
 
-                        GenericRequest<ArrayList<Issue>> requestIssue = new GenericRequest<>(Constantes.URL_API_REPOS
-                                .concat(loginOwner != null ? loginOwner : "")
-                                .concat("/")
-                                .concat(nameRepository != null ? nameRepository : "")
-                                .concat(Constantes.URL_API_ISSUES)
-                                .concat(getAcessToken()
-                                        .concat("&milestone=")
-                                        .concat(String.valueOf(milestone.number))
-                                        .concat("&labels=feature")), issueType, new Response.Listener<ArrayList<Issue>>() {
-                            @Override
-                            public void onResponse(ArrayList<Issue> response) {
-                                issues.addAll(response);
-                                listView.setAdapter(new AdapterIssues(issues, context));
-                            }
-                        }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                listView.setAdapter(new AdapterIssues(issues, context));
-                                Log.i("Response", error.getMessage());
-                            }
-                        }, params, true);
-
-                        requestQueue.add(requestIssue);
-                        break;
+                    List<IssueLabel> issueLabels = IssueLabelDAO.getInstance(context).findByParam("repository_id", idRepository);
+                    HashMap<String,ArrayList<Label>> hashMapIssues = new HashMap<>();
+                    for (IssueLabel issueLabel : issueLabels) {
+                        if(!hashMapIssues.containsKey(issueLabel.issue.id)) {
+                            hashMapIssues.put(issueLabel.issue.id, new ArrayList<Label>());
+                            hashMapIssues.get(issueLabel.issue.id).add(issueLabel.label);
+                            continue;
+                        }
+                        hashMapIssues.get(issueLabel.issue.id).add(issueLabel.label);
                     }
+                    for (IssueLabel issueLabel : issueLabels) {
+                        if (hashMapIssues.containsKey(issueLabel.issue.id)){
+                            Issue issue = issueLabel.issue;
+                            issue.labels.addAll(hashMapIssues.get(issue.id));
+                            issues.add(issue);
+                            hashMapIssues.remove(issue.id);
+                        }
+                    }
+                } catch (Exception e) {
+                }
+                refreshAdapter();
             }
-        }, new Response.ErrorListener() {
+        }, 0);
+    }
+
+    private void refreshAdapter() {
+        IssuesActivity.this.runOnUiThread(new Runnable() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.i("Response", error.getMessage());
+            public void run() {
+                listView.setAdapter(new AdapterIssues(issues, context));
+                progressBar.setVisibility(View.GONE);
             }
-        }, params, true);
-
-        requestQueue.add(requestMilestone);
+        });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_issues, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

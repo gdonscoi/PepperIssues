@@ -8,4 +8,7 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="title_activity_issues">IssuesActivity</string>
     <string name="title_activity_update">UpdateActivity</string>
+
+    <string name="tile_text_update">Sincronizando Repositórios</string>
+    <string name="description_image">Imagem</string>
 </resources>
