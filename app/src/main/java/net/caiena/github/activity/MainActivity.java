@@ -44,6 +44,7 @@ public class MainActivity extends BaseActivity {
 
         repositories = new ArrayList<>();
         this.context = this;
+        setTitle("Repositórios");
 
         progressBar = (ProgressBar) findViewById(R.id.progressBarList);
         listView = (RecyclerView) findViewById(R.id.recycleViewList);

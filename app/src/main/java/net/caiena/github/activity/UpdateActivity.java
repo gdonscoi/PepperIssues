@@ -39,7 +39,7 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
 
         titleText = (TextView) findViewById(R.id.text_title_update);
         titleText.setText(context.getString(R.string.tile_text_update));
-        titleText.setTextColor(Color.parseColor("#ffffff"));
+        titleText.setTextColor(Color.parseColor("#696969"));
 
         avatar = (ImageView) findViewById(R.id.avatar);
         avatar.setVisibility(View.GONE);

@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import net.caiena.github.R;
 import net.caiena.github.adapter.AdapterIssues;
@@ -17,6 +18,7 @@ import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,7 @@ public class IssuesActivity extends BaseActivity {
 
     private Context context;
     private RecyclerView listView;
+    private TextView naoPossui;
     private ArrayList<Issue> issues;
     private int idRepository;
     private ProgressBar progressBar;
@@ -36,8 +39,11 @@ public class IssuesActivity extends BaseActivity {
 
         this.context = this;
         Bundle extras = getIntent().getExtras();
-        idRepository = extras.getInt("repository");
+        idRepository = extras.getInt("idRepository");
 
+        setTitle(extras.getString("nameRepository"));
+
+        naoPossui = (TextView) findViewById(R.id.text_nao_possui_issue);
         progressBar = (ProgressBar) findViewById(R.id.progressBarListIssue);
         listView = (RecyclerView) findViewById(R.id.recycleViewListIssues);
         listView.addItemDecoration(new SpacesItemDecoration(getResources()));
@@ -49,10 +55,13 @@ public class IssuesActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                List<IssueLabel> issueLabels;
                 try {
-
-                    List<IssueLabel> issueLabels = IssueLabelDAO.getInstance(context).findByParam("repository_id", idRepository);
-                    HashMap<String,ArrayList<Label>> hashMapIssues = new HashMap<>();
+                    issueLabels = IssueLabelDAO.getInstance(context).findByParam("repository_id", idRepository);
+                } catch (Exception e) {
+                    issueLabels = Collections.emptyList();
+                }
+                HashMap<String,ArrayList<Label>> hashMapIssues = new HashMap<>();
                     for (IssueLabel issueLabel : issueLabels) {
                         if(!hashMapIssues.containsKey(issueLabel.issue.id)) {
                             hashMapIssues.put(issueLabel.issue.id, new ArrayList<Label>());
@@ -69,18 +78,19 @@ public class IssuesActivity extends BaseActivity {
                             hashMapIssues.remove(issue.id);
                         }
                     }
-                } catch (Exception e) {
-                }
                 refreshAdapter();
             }
-        }, 0);
+        }, 1000);
     }
 
     private void refreshAdapter() {
         IssuesActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                listView.setAdapter(new AdapterIssues(issues, context));
+                if(issues.isEmpty())
+                    naoPossui.setVisibility(View.VISIBLE);
+                else
+                    listView.setAdapter(new AdapterIssues(issues, context));
                 progressBar.setVisibility(View.GONE);
             }
         });

@@ -32,7 +32,7 @@ public class AdapterIssues extends RecyclerView.Adapter<AdapterIssues.ViewHolder
             titleIssue = (TextView) v.findViewById(R.id.title_issue);
             containerLabels = (PredicateLayout) v.findViewById(R.id.container_label_issue);
             this.issues = issues;
-            if(!issues.isEmpty())
+            if (!issues.isEmpty())
                 v.findViewById(R.id.none_issue).setVisibility(View.GONE);
             v.setOnClickListener(this);
         }
@@ -66,19 +66,19 @@ public class AdapterIssues extends RecyclerView.Adapter<AdapterIssues.ViewHolder
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.titleIssue.setText(issues.get(position).title);
 
-        if(holder.containerLabels.getChildCount() > 0) {
+        if (holder.containerLabels.getChildCount() > 0) {
             holder.containerLabels.removeAllViews();
         }
-        for(Label label : issues.get(position).labels) {
+        for (Label label : issues.get(position).labels) {
             labelText = new TextView(context);
-            labelText.setPadding(5,0,5,0);
+            labelText.setPadding(5, 0, 5, 0);
             labelText.setSingleLine(true);
             labelText.setEllipsize(TextUtils.TruncateAt.END);
             labelText.setTextSize(18);
             labelText.setTypeface(null, Typeface.BOLD);
             labelText.setText(label.name);
 
-            int color = (int)Long.parseLong(label.color, 16);
+            int color = (int) Long.parseLong(label.color, 16);
             labelText.setTextColor(Color.rgb((255 - ((color >> 16) & 0xFF)), (255 - ((color >> 8) & 0xFF)), (255 - ((color >> 0) & 0xFF))));
 
             labelText.setBackgroundColor(Color.parseColor("#".concat(label.color)));

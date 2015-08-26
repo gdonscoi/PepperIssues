@@ -11,4 +11,5 @@
 
     <string name="tile_text_update">Sincronizando Repositórios</string>
     <string name="description_image">Imagem</string>
+    <string name="nao_possui_issue">Não possui issue</string>
 </resources>

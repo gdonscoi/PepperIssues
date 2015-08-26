@@ -41,8 +41,8 @@ public class AdapterRepos extends RecyclerView.Adapter<AdapterRepos.ViewHolder> 
         public void onClick(View view) {
 //            Toast.makeText(view.getContext(), getAdapterPosition() + " position = " + getPosition(), Toast.LENGTH_SHORT).show();
             Intent i = new Intent(view.getContext(), IssuesActivity.class);
-            i.putExtra("repository", repositories.get(getAdapterPosition()).id);
-            i.putExtra("owner", repositories.get(getAdapterPosition()).ownerLogin);
+            i.putExtra("idRepository", repositories.get(getAdapterPosition()).id);
+            i.putExtra("nameRepository", repositories.get(getAdapterPosition()).nameFull);
             view.getContext().startActivity(i);
         }
     }
