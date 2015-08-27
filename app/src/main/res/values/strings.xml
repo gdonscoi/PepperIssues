@@ -12,4 +12,7 @@
     <string name="tile_text_update">Sincronizando Repositórios</string>
     <string name="description_image">Imagem</string>
     <string name="nao_possui_issue">Não possui issue</string>
+    <string name="nao_possui_repositorio">Não possui repositório</string>
+    <string name="title_activity_issue_details">IssueDetailsActivity</string>
+
 </resources>

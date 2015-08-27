@@ -21,24 +21,24 @@ public class User implements IEntidade, Serializable {
     public int id;
 
     @DatabaseField
-    public String login;
+    public String login = "";
 
     @DatabaseField
-    public String name;
+    public String name= "";
 
     @DatabaseField
-    public String email;
+    public String email = "";
 
     @SerializedName("html_url")
     @DatabaseField
-    public String html;
+    public String html = "";
 
     @DatabaseField
-    public String type;
+    public String type = "";
 
     @DatabaseField(columnName = "avatar_url")
     @SerializedName("avatar_url")
-    public String avatarUrl;
+    public String avatarUrl = "";
 
     @DatabaseField(dataType = DataType.BYTE_ARRAY)
     private byte[] avatar;

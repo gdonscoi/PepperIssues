@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import net.caiena.github.Util.Constantes;
+import net.caiena.github.model.bean.Comment;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.Milestone;
 import net.caiena.github.model.bean.Repository;
@@ -91,6 +92,20 @@ public class GitHubController {
             return null;
         }
         return stream.toByteArray();
+    }
+
+    public ArrayList<Comment> getComments(String owner, String repository, int issueNumber) throws Throwable {
+        String response = getURL(Constantes.URL_API_REPOS
+                .concat(owner)
+                .concat("/")
+                .concat(repository)
+                .concat(Constantes.URL_API_ISSUES_STRING)
+                .concat("/" + issueNumber)
+                .concat(Constantes.URL_API_COMMENTS)
+                .concat(accessToken));
+        Type commentType = new TypeToken<List<Comment>>() {
+        }.getType();
+        return gson.fromJson(response, commentType);
     }
 
     private String getURL(String url) throws Throwable {

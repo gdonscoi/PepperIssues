@@ -52,8 +52,7 @@ public class IssuesActivity extends BaseActivity {
         listView.setLayoutManager(mLayoutManager);
 
         issues = new ArrayList<>();
-        new Handler().postDelayed(new Runnable() {
-            @Override
+        new Thread(new Runnable() {
             public void run() {
                 List<IssueLabel> issueLabels;
                 try {
@@ -80,7 +79,7 @@ public class IssuesActivity extends BaseActivity {
                     }
                 refreshAdapter();
             }
-        }, 1000);
+        }).start();
     }
 
     private void refreshAdapter() {

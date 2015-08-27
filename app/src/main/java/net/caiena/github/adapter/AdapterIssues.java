@@ -1,6 +1,7 @@
 package net.caiena.github.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import net.caiena.github.R;
+import net.caiena.github.activity.IssueDetailsActivity;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.Label;
 
@@ -32,18 +34,14 @@ public class AdapterIssues extends RecyclerView.Adapter<AdapterIssues.ViewHolder
             titleIssue = (TextView) v.findViewById(R.id.title_issue);
             containerLabels = (PredicateLayout) v.findViewById(R.id.container_label_issue);
             this.issues = issues;
-            if (!issues.isEmpty())
-                v.findViewById(R.id.none_issue).setVisibility(View.GONE);
             v.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-//            Toast.makeText(view.getContext(), getAdapterPosition() + " position = " + getPosition(), Toast.LENGTH_SHORT).show();
-//            Intent i = new Intent(view.getContext(), IssuesActivity.class);
-//            i.putExtra("repository", issues.get(getAdapterPosition()).name);
-//            i.putExtra("owner", issues.get(getAdapterPosition()).owner.login);
-//            view.getContext().startActivity(i);
+            Intent i = new Intent(view.getContext(), IssueDetailsActivity.class);
+            i.putExtra("idIssue", issues.get(getAdapterPosition()).id);
+            view.getContext().startActivity(i);
         }
     }
 

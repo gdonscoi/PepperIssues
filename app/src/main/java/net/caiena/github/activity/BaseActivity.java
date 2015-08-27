@@ -69,4 +69,15 @@ public class BaseActivity extends AppCompatActivity {
         editor.apply();
         access_token = acessToken;
     }
+
+    public boolean getControlUpdate() {
+        return prefUsuario.getBoolean("control_update", false);
+    }
+
+    public void setControlUpdate(boolean controlUpdate) {
+        SharedPreferences.Editor editor = prefUsuario.edit();
+        editor.putBoolean("control_update", controlUpdate);
+        editor.apply();
+    }
+
 }

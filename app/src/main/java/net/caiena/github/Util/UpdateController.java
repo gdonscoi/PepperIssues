@@ -8,13 +8,14 @@ import android.widget.ProgressBar;
 
 import net.caiena.github.GitHubController;
 import net.caiena.github.activity.MainActivity;
-import net.caiena.github.activity.SplashScreen;
 import net.caiena.github.activity.UpdateActivity;
+import net.caiena.github.model.DAO.CommentDAO;
 import net.caiena.github.model.DAO.IssueDAO;
 import net.caiena.github.model.DAO.IssueLabelDAO;
 import net.caiena.github.model.DAO.LabelDAO;
 import net.caiena.github.model.DAO.RepositoryDAO;
 import net.caiena.github.model.DAO.UserDAO;
+import net.caiena.github.model.bean.Comment;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
@@ -61,9 +62,10 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 
             ArrayList<Repository> repositories = gitHubController.getRepositories();
             ArrayList<Issue> issues = new ArrayList<>();
+            ArrayList<Comment> comments = new ArrayList<>();
             ArrayList<IssueLabel> issueLabels = new ArrayList<>();
             int sizeRepositories = repositories.size();
-            ArrayList<Issue> issuesGitHub = new ArrayList<>();
+
             HashMap<String, Label> labelHashMap = new HashMap<>();
 
             for (Repository repository : repositories) {
@@ -73,18 +75,22 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
                 for (Milestone milestone : milestones) {
                     if (milestone.title.toLowerCase().equals("backlog") || milestone.title.toLowerCase().equals("product backlog")) {
                         IssueLabel issueLabel;
-
+                        ArrayList<Issue> issuesGitHub = new ArrayList<>();
                         issuesGitHub.addAll(gitHubController.getIssues(repository.ownerLogin, repository.name, milestone.number));
                         for (Issue issue : issuesGitHub) {
                             issue.repository = repository;
                             issue.nameMilestone = milestone.title;
 
-                            for (Label label : issue.labels) {
-                                issueLabel = new IssueLabel();
-                                issueLabel.issue = issue;
-                                issueLabel.label = label;
-                                issueLabel.repository = repository;
+                            ArrayList<Comment> commentsIssue = gitHubController.getComments(repository.ownerLogin, repository.name,issue.number);
+                            for(Comment commentIndex :commentsIssue) {
+                                commentIndex.issue = issue;
+                                commentIndex.ownerComment = commentIndex.user.login;
+                                comments.add(commentIndex);
+                            }
 
+                            for (Label label : issue.labels) {
+                                issueLabel = new IssueLabel(issue, label, repository);
+                                label.repository = repository;
                                 labelHashMap.put(label.url, label);
                                 issueLabels.add(issueLabel);
                             }
@@ -102,6 +108,7 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
             RepositoryDAO.getInstance(context).createOrUpdate(repositories);
             IssueDAO.getInstance(context).createOrUpdate(issues);
             LabelDAO.getInstance(context).createOrUpdate(new ArrayList<>(labelHashMap.values()));
+            CommentDAO.getInstance(context).createOrUpdate(comments);
             IssueLabelDAO.getInstance(context).createOrUpdate(issueLabels);
 
             db.setTransactionSuccessful();
@@ -123,20 +130,21 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
     protected void onProgressUpdate(Integer... values) {
         if (values[0] == TYPE_UPDATE_PROGRESS_BAR) {
             callbackProgressBarActivity.updateProgressBar(values[1], values[2]);
-        }else if (values[0] == TYPE_UPDATE_AVATAR) {
-            callbackProgressBarActivity.updateInfoActivity(user.getCircularAvatar(),user.name,user.html);
+        } else if (values[0] == TYPE_UPDATE_AVATAR) {
+            callbackProgressBarActivity.updateInfoActivity(user.getCircularAvatar(), user.name, user.html);
         }
     }
 
     @Override
     protected void onPostExecute(Boolean result) {
-        if(result == null) {
+        if (result == null) {
             callbackProgressBarActivity.updateError();
             return;
         }
         Intent intentWebView = new Intent(context, MainActivity.class);
         context.startActivity(intentWebView);
-        ((UpdateActivity)context).finish();
+        ((UpdateActivity) context).setControlUpdate(true);
+        ((UpdateActivity) context).finish();
     }
 
 }

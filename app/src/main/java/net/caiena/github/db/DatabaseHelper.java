@@ -9,6 +9,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import net.caiena.github.model.bean.Comment;
 import net.caiena.github.model.bean.IEntidade;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueLabel;
@@ -27,7 +28,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_FILE_NAME = "pepperissues";
 
     // versao do banco - qualquer alteracao de banco incremente no valor
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private Map<Class, Dao<IEntidade, Object>> daos = new HashMap<>();
 
@@ -50,6 +51,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, User.class);
             Log.i(DatabaseHelper.class.getName(), "Create table IssueLabel");
             TableUtils.createTable(connectionSource, IssueLabel.class);
+            Log.i(DatabaseHelper.class.getName(), "Create table Comment");
+            TableUtils.createTable(connectionSource, Comment.class);
 
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
@@ -71,6 +74,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.dropTable(connectionSource, User.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table IssueLabel");
             TableUtils.dropTable(connectionSource, IssueLabel.class, true);
+            Log.i(DatabaseHelper.class.getName(), "Update table Comment");
+            TableUtils.dropTable(connectionSource, Comment.class, true);
 
             onCreate(db, connectionSource);
         } catch (android.database.SQLException | SQLException e) {
