@@ -40,7 +40,7 @@ public class AdapterIssues extends RecyclerView.Adapter<AdapterIssues.ViewHolder
         @Override
         public void onClick(View view) {
             Intent i = new Intent(view.getContext(), IssueDetailsActivity.class);
-            i.putExtra("idIssue", issues.get(getAdapterPosition()).id);
+            i.putExtra("issue", issues.get(getAdapterPosition()));
             view.getContext().startActivity(i);
         }
     }

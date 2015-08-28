@@ -5,8 +5,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.w3c.dom.Comment;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,8 +35,16 @@ public class Issue implements IEntidade, Serializable {
     @DatabaseField
     public int number;
 
+    @DatabaseField
+    public int comments;
+
     @Expose
     @ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 1)
-    public Collection<Comment> comments = new ArrayList<>();
+    public Collection<Comment> commentList = new ArrayList<>();
+
+    public User user;
+
+//    @DatabaseField
+//    public String ownerIssue = "";
 
 }

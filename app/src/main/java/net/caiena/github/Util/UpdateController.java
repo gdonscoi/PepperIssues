@@ -80,12 +80,15 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
                         for (Issue issue : issuesGitHub) {
                             issue.repository = repository;
                             issue.nameMilestone = milestone.title;
+//                            issue.ownerIssue = issue.user != null ? issue.user.login : "";
 
-                            ArrayList<Comment> commentsIssue = gitHubController.getComments(repository.ownerLogin, repository.name,issue.number);
-                            for(Comment commentIndex :commentsIssue) {
-                                commentIndex.issue = issue;
-                                commentIndex.ownerComment = commentIndex.user.login;
-                                comments.add(commentIndex);
+                            if (issue.comments > 0) {
+                                ArrayList<Comment> commentsIssue = gitHubController.getComments(repository.ownerLogin, repository.name, issue.number);
+                                for (Comment commentIndex : commentsIssue) {
+                                    commentIndex.issue = issue;
+                                    commentIndex.ownerComment = commentIndex.user.login;
+                                    comments.add(commentIndex);
+                                }
                             }
 
                             for (Label label : issue.labels) {

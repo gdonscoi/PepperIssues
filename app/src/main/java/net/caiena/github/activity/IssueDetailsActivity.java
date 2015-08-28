@@ -6,14 +6,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import net.caiena.github.R;
 import net.caiena.github.adapter.AdapterIssueComment;
-import net.caiena.github.adapter.SpacesItemDecoration;
-import net.caiena.github.model.DAO.CommentDAO;
-import net.caiena.github.model.DAO.RepositoryDAO;
 import net.caiena.github.model.bean.Comment;
+import net.caiena.github.model.bean.Issue;
 
 import java.util.ArrayList;
 
@@ -23,7 +20,7 @@ public class IssueDetailsActivity extends BaseActivity {
     private Context context;
     private ArrayList<Comment> comments;
     private ProgressBar progressBar;
-    private int idIssue;
+    private Issue issue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +30,12 @@ public class IssueDetailsActivity extends BaseActivity {
         context = this;
 
         Bundle extras = getIntent().getExtras();
-        idIssue = extras.getInt("idIssue");
+        issue = (Issue) extras.get("issue");
+        setTitle("#" + issue.number);
+        comments = new ArrayList<>();
+
         progressBar = (ProgressBar) findViewById(R.id.progressBarListComment);
         listView = (RecyclerView) findViewById(R.id.recycleViewListComment);
-        listView.addItemDecoration(new SpacesItemDecoration(getResources()));
         listView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(mLayoutManager);
@@ -44,25 +43,21 @@ public class IssueDetailsActivity extends BaseActivity {
         new Thread(new Runnable() {
             public void run() {
                 try {
-                    comments.addAll(CommentDAO.getInstance(context).findByParam("issue_id" , idIssue));
-                } catch (Exception e) {
-                    comments = new ArrayList<>();
+//                    comments.addAll(CommentDAO.getInstance(context).findByParam("issue_id" , idIssue));
+                    comments.addAll(new ArrayList<>(issue.commentList));
+                } catch (Exception ignored) {
+
                 }
                 refreshAdapter();
             }
         }).start();
     }
 
-    @Override
-    public void onBackPressed() {
-    }
-
     private void refreshAdapter() {
         IssueDetailsActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(!comments.isEmpty())
-                    listView.setAdapter(new AdapterIssueComment(comments, context));
+                listView.setAdapter(new AdapterIssueComment(comments, issue, context));
                 progressBar.setVisibility(View.GONE);
             }
         });
