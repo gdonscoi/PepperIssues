@@ -40,7 +40,7 @@ public class Issue implements IEntidade, Serializable {
 
     @Expose
     @ForeignCollectionField(eager = true, maxEagerForeignCollectionLevel = 1)
-    public Collection<Comment> commentList = new ArrayList<>();
+    public Collection<IssueComment> commentList = new ArrayList<>();
 
     public User user;
 

@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 
 import net.caiena.github.R;
 import net.caiena.github.adapter.AdapterIssueComment;
-import net.caiena.github.model.bean.Comment;
+import net.caiena.github.model.bean.IssueComment;
 import net.caiena.github.model.bean.Issue;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class IssueDetailsActivity extends BaseActivity {
 
     private RecyclerView listView;
     private Context context;
-    private ArrayList<Comment> comments;
+    private ArrayList<IssueComment> comments;
     private ProgressBar progressBar;
     private Issue issue;
 

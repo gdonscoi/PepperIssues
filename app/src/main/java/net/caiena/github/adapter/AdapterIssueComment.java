@@ -9,14 +9,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.caiena.github.R;
-import net.caiena.github.model.bean.Comment;
+import net.caiena.github.model.bean.IssueComment;
 import net.caiena.github.model.bean.Issue;
 
 import java.util.ArrayList;
 
 public class AdapterIssueComment extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<Comment> comments;
+    private ArrayList<IssueComment> comments;
     private Issue issue;
     private Context context;
     public static final int CONTENT_ISSUE_TYPE = 0;
@@ -60,7 +60,7 @@ public class AdapterIssueComment extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public AdapterIssueComment(ArrayList<Comment> comments,Issue issue, Context context) {
+    public AdapterIssueComment(ArrayList<IssueComment> comments,Issue issue, Context context) {
         this.context = context;
         this.comments = comments;
         this.issue = issue;

@@ -9,12 +9,11 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import net.caiena.github.model.bean.Comment;
+import net.caiena.github.model.bean.IssueComment;
 import net.caiena.github.model.bean.IEntidade;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
-import net.caiena.github.model.bean.Milestone;
 import net.caiena.github.model.bean.Repository;
 import net.caiena.github.model.bean.User;
 
@@ -52,7 +51,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i(DatabaseHelper.class.getName(), "Create table IssueLabel");
             TableUtils.createTable(connectionSource, IssueLabel.class);
             Log.i(DatabaseHelper.class.getName(), "Create table Comment");
-            TableUtils.createTable(connectionSource, Comment.class);
+            TableUtils.createTable(connectionSource, IssueComment.class);
 
         } catch (SQLException e) {
             Log.e(DatabaseHelper.class.getName(), "Can't create database", e);
@@ -75,7 +74,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             Log.i(DatabaseHelper.class.getName(), "Update table IssueLabel");
             TableUtils.dropTable(connectionSource, IssueLabel.class, true);
             Log.i(DatabaseHelper.class.getName(), "Update table Comment");
-            TableUtils.dropTable(connectionSource, Comment.class, true);
+            TableUtils.dropTable(connectionSource, IssueComment.class, true);
 
             onCreate(db, connectionSource);
         } catch (android.database.SQLException | SQLException e) {

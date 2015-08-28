@@ -2,9 +2,9 @@ package net.caiena.github.model.DAO;
 
 import android.content.Context;
 
-import net.caiena.github.model.bean.Comment;
+import net.caiena.github.model.bean.IssueComment;
 
-public class CommentDAO extends BaseDAO<Comment> {
+public class CommentDAO extends BaseDAO<IssueComment> {
 
     private static CommentDAO dao;
 

@@ -15,7 +15,7 @@ import net.caiena.github.model.DAO.IssueLabelDAO;
 import net.caiena.github.model.DAO.LabelDAO;
 import net.caiena.github.model.DAO.RepositoryDAO;
 import net.caiena.github.model.DAO.UserDAO;
-import net.caiena.github.model.bean.Comment;
+import net.caiena.github.model.bean.IssueComment;
 import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
@@ -62,7 +62,7 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 
             ArrayList<Repository> repositories = gitHubController.getRepositories();
             ArrayList<Issue> issues = new ArrayList<>();
-            ArrayList<Comment> comments = new ArrayList<>();
+            ArrayList<IssueComment> comments = new ArrayList<>();
             ArrayList<IssueLabel> issueLabels = new ArrayList<>();
             int sizeRepositories = repositories.size();
 
@@ -83,8 +83,8 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
 //                            issue.ownerIssue = issue.user != null ? issue.user.login : "";
 
                             if (issue.comments > 0) {
-                                ArrayList<Comment> commentsIssue = gitHubController.getComments(repository.ownerLogin, repository.name, issue.number);
-                                for (Comment commentIndex : commentsIssue) {
+                                ArrayList<IssueComment> commentsIssue = gitHubController.getComments(repository.ownerLogin, repository.name, issue.number);
+                                for (IssueComment commentIndex : commentsIssue) {
                                     commentIndex.issue = issue;
                                     commentIndex.ownerComment = commentIndex.user.login;
                                     comments.add(commentIndex);
