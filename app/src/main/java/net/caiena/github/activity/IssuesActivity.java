@@ -2,14 +2,15 @@ package net.caiena.github.activity;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.caiena.github.R;
+import net.caiena.github.Util.DragController;
 import net.caiena.github.adapter.AdapterIssues;
 import net.caiena.github.adapter.SpacesItemDecoration;
 import net.caiena.github.model.DAO.IssueLabelDAO;
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class IssuesActivity extends BaseActivity {
 
@@ -48,8 +48,11 @@ public class IssuesActivity extends BaseActivity {
         listView = (RecyclerView) findViewById(R.id.recycleViewListIssues);
         listView.addItemDecoration(new SpacesItemDecoration(getResources()));
         listView.setHasFixedSize(true);
+
+        ImageView overlay = (ImageView) findViewById(R.id.overlay);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         listView.setLayoutManager(mLayoutManager);
+        listView.addOnItemTouchListener(new DragController(listView, overlay));
 
         issues = new ArrayList<>();
         new Thread(new Runnable() {
@@ -60,23 +63,23 @@ public class IssuesActivity extends BaseActivity {
                 } catch (Exception e) {
                     issueLabels = Collections.emptyList();
                 }
-                HashMap<String,ArrayList<Label>> hashMapIssues = new HashMap<>();
-                    for (IssueLabel issueLabel : issueLabels) {
-                        if(!hashMapIssues.containsKey(issueLabel.issue.id)) {
-                            hashMapIssues.put(issueLabel.issue.id, new ArrayList<Label>());
-                            hashMapIssues.get(issueLabel.issue.id).add(issueLabel.label);
-                            continue;
-                        }
+                HashMap<String, ArrayList<Label>> hashMapIssues = new HashMap<>();
+                for (IssueLabel issueLabel : issueLabels) {
+                    if (!hashMapIssues.containsKey(issueLabel.issue.id)) {
+                        hashMapIssues.put(issueLabel.issue.id, new ArrayList<Label>());
                         hashMapIssues.get(issueLabel.issue.id).add(issueLabel.label);
+                        continue;
                     }
-                    for (IssueLabel issueLabel : issueLabels) {
-                        if (hashMapIssues.containsKey(issueLabel.issue.id)){
-                            Issue issue = issueLabel.issue;
-                            issue.labels.addAll(hashMapIssues.get(issue.id));
-                            issues.add(issue);
-                            hashMapIssues.remove(issue.id);
-                        }
+                    hashMapIssues.get(issueLabel.issue.id).add(issueLabel.label);
+                }
+                for (IssueLabel issueLabel : issueLabels) {
+                    if (hashMapIssues.containsKey(issueLabel.issue.id)) {
+                        Issue issue = issueLabel.issue;
+                        issue.labels.addAll(hashMapIssues.get(issue.id));
+                        issues.add(issue);
+                        hashMapIssues.remove(issue.id);
                     }
+                }
                 refreshAdapter();
             }
         }).start();
@@ -86,7 +89,7 @@ public class IssuesActivity extends BaseActivity {
         IssuesActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(issues.isEmpty())
+                if (issues.isEmpty())
                     naoPossui.setVisibility(View.VISIBLE);
                 else
                     listView.setAdapter(new AdapterIssues(issues, context));

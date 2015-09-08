@@ -48,6 +48,7 @@ public class AdapterIssues extends RecyclerView.Adapter<AdapterIssues.ViewHolder
     public AdapterIssues(ArrayList<Issue> issues, Context context) {
         this.context = context;
         this.issues = issues;
+        setHasStableIds(true);
     }
 
     @Override
@@ -86,10 +87,34 @@ public class AdapterIssues extends RecyclerView.Adapter<AdapterIssues.ViewHolder
 
     }
 
+    @Override
+    public long getItemId(int position) {
+        return issues.get(position).number;
+    }
 
     @Override
     public int getItemCount() {
         return issues.size();
+    }
+
+    public void moveItem(int start, int end) {
+        int max = Math.max(start, end);
+        int min = Math.min(start, end);
+        if (min >= 0 && max < issues.size()) {
+            Issue item = issues.remove(min);
+            issues.add(max, item);
+            notifyItemMoved(min, max);
+        }
+    }
+
+    public int getPositionForId(long id) {
+        int index = issues.size();
+        for (int i = 0; i < index; i++) {
+            if (issues.get(i).number == id) {
+                return i;
+            }
+        }
+        return -1;
     }
 
 }

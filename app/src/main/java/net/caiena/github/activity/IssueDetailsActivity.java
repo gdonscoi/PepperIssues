@@ -9,8 +9,8 @@ import android.widget.ProgressBar;
 
 import net.caiena.github.R;
 import net.caiena.github.adapter.AdapterIssueComment;
-import net.caiena.github.model.bean.IssueComment;
 import net.caiena.github.model.bean.Issue;
+import net.caiena.github.model.bean.IssueComment;
 
 import java.util.ArrayList;
 
@@ -31,7 +31,7 @@ public class IssueDetailsActivity extends BaseActivity {
 
         Bundle extras = getIntent().getExtras();
         issue = (Issue) extras.get("issue");
-        setTitle("#" + issue.number);
+        setTitle("#" + (issue != null ? issue.number : 0));
         comments = new ArrayList<>();
 
         progressBar = (ProgressBar) findViewById(R.id.progressBarListComment);
