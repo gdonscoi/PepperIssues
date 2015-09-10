@@ -5,12 +5,14 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import net.caiena.github.Util.AbstractDataProvider;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "issue")
-public class Issue implements IEntidade, Serializable {
+public class Issue extends AbstractDataProvider.Data implements IEntidade, Serializable {
 
     @DatabaseField(id = true)
     public String id;
@@ -43,6 +45,46 @@ public class Issue implements IEntidade, Serializable {
     public Collection<IssueComment> commentList = new ArrayList<>();
 
     public User user;
+
+    @Override
+    public long getId() {
+        return number;
+    }
+
+    @Override
+    public Object getObject() {
+        return this;
+    }
+
+    @Override
+    public boolean isSectionHeader() {
+        return false;
+    }
+
+    @Override
+    public int getViewType() {
+        return 0;
+    }
+
+    @Override
+    public int getSwipeReactionType() {
+        return 0;
+    }
+
+    @Override
+    public String getText() {
+        return title;
+    }
+
+    @Override
+    public void setPinnedToSwipeLeft(boolean pinned) {
+
+    }
+
+    @Override
+    public boolean isPinnedToSwipeLeft() {
+        return false;
+    }
 
 //    @DatabaseField
 //    public String ownerIssue = "";

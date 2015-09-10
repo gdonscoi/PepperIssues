@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,6 +54,7 @@ public class DragController implements RecyclerView.OnItemTouchListener {
     @Override
     public void onTouchEvent(RecyclerView rv, MotionEvent e) {
         int y = (int) e.getY();
+        Log.e("D R A G    S T A R T" ,  y +" >>>>>>>>>");
         if (e.getAction() == MotionEvent.ACTION_UP) {
             dragEnd();
             isDragging = false;
@@ -80,12 +82,16 @@ public class DragController implements RecyclerView.OnItemTouchListener {
 
     private void drag(int y) {
         overlay.setTranslationY(y - startY);
-        if (!isInPreviousBounds()) {
+//        if (!isInPreviousBounds()) {
             View view = recyclerView.findChildViewUnder(0, y);
-            if (recyclerView.indexOfChild(view) != 0 && view != null) {
+            if(view == null)
+                view = recyclerView.getChildAt(0);
+            Log.e("D R A G" , String.valueOf(recyclerView.indexOfChild(view)) + " << >> " + (view == null ? " NULL" : " View"));
+        if (view != null) {
+//            if (view != null) {
                 swapViews(view);
             }
-        }
+//        }
     }
 
     private void swapViews(View current) {
