@@ -1,6 +1,7 @@
 package net.caiena.github.model.DAO;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import net.caiena.github.model.bean.Issue;
 
@@ -18,6 +19,10 @@ public class IssueDAO extends BaseDAO<Issue> {
     private IssueDAO(Context ctx) {
         super();
         super.ctx = ctx;
+    }
+
+    public SQLiteDatabase getConnectionDataBase() throws Exception {
+        return dao.getHelper().getWritableDatabase();
     }
 
 }

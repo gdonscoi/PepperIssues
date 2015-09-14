@@ -15,8 +15,8 @@ import net.caiena.github.model.DAO.IssueLabelDAO;
 import net.caiena.github.model.DAO.LabelDAO;
 import net.caiena.github.model.DAO.RepositoryDAO;
 import net.caiena.github.model.DAO.UserDAO;
-import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueComment;
+import net.caiena.github.model.bean.Issue;
 import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
 import net.caiena.github.model.bean.Milestone;
@@ -26,7 +26,7 @@ import net.caiena.github.model.bean.User;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class UpdateController extends AsyncTask<String, Integer, Boolean> {
+public class DownloadController extends AsyncTask<String, Integer, Boolean> {
 
     private String accessToken;
     private ProgressBar progressBar;
@@ -36,7 +36,7 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
     public static final int TYPE_UPDATE_PROGRESS_BAR = 1;
     public static final int TYPE_UPDATE_AVATAR = 2;
 
-    public UpdateController(String accessToken, ProgressBar progressBar, Context context) {
+    public DownloadController(String accessToken, ProgressBar progressBar, Context context) {
         this.accessToken = accessToken;
         this.progressBar = progressBar;
         this.context = context;
@@ -56,7 +56,7 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
         GitHubController gitHubController = new GitHubController(accessToken);
         SQLiteDatabase db = null;
         try {
-            user = UserDAO.getInstance(context).findAll().get(0);
+            user = gitHubController.getUser();
             user.setAvatar(gitHubController.getAvatarUser(user.avatarUrl));
             publishProgress(TYPE_UPDATE_AVATAR);
 
@@ -77,18 +77,12 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
                         IssueLabel issueLabel;
                         ArrayList<Issue> issuesGitHub = new ArrayList<>();
                         issuesGitHub.addAll(gitHubController.getIssues(repository.ownerLogin, repository.name, milestone.number));
-                        int sizeIssuesLocal = IssueDAO.getInstance(context).findByParam("repository_id", repository.id).size();
-                        Issue issueLocal;
+                        int startPosition = 0;
                         for (Issue issue : issuesGitHub) {
                             issue.repository = repository;
                             issue.nameMilestone = milestone.title;
-                            issueLocal = IssueDAO.getInstance(context).findByPK(issue.id);
-                            if(issueLocal != null) {
-                                issue.position = issueLocal.position;
-                            }else {
-                                issue.position = sizeIssuesLocal;
-                                sizeIssuesLocal++;
-                            }
+                            issue.position = startPosition;
+                            startPosition++;
 
                             if (issue.comments > 0) {
                                 ArrayList<IssueComment> commentsIssue = gitHubController.getComments(repository.ownerLogin, repository.name, issue.number);
@@ -115,12 +109,7 @@ public class UpdateController extends AsyncTask<String, Integer, Boolean> {
             db = RepositoryDAO.getInstance(context).getConnectionDataBase();
             db.beginTransaction();
 
-            IssueDAO.getInstance(context).destroyAll();
-            LabelDAO.getInstance(context).destroyAll();
-            CommentDAO.getInstance(context).destroyAll();
-            IssueLabelDAO.getInstance(context).destroyAll();
-            RepositoryDAO.getInstance(context).destroyAll();
-
+            UserDAO.getInstance(context).createOrUpdate(user);
             RepositoryDAO.getInstance(context).createOrUpdate(repositories);
             IssueDAO.getInstance(context).createOrUpdate(issues);
             LabelDAO.getInstance(context).createOrUpdate(new ArrayList<>(labelHashMap.values()));

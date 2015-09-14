@@ -14,5 +14,6 @@
     <string name="nao_possui_issue">Não possui issue</string>
     <string name="nao_possui_repositorio">Não possui repositório</string>
     <string name="title_activity_issue_details">IssueDetailsActivity</string>
+    <string name="refresh_repositories">Update Repositórios</string>
 
 </resources>

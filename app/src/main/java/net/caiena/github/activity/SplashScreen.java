@@ -15,10 +15,22 @@ public class SplashScreen extends BaseActivity {
         setContentView(R.layout.activity_splash_screen);
 
         if (!getAcessToken().trim().equals("")) {
-            Intent intent = getControlUpdate() ? new Intent(SplashScreen.this,MainActivity.class) : new Intent(SplashScreen.this, UpdateActivity.class);
-//            Intent intentWebView = new Intent(SplashScreen.this, UpdateActivity.class);
+            Intent intent;
+            Bundle extras = getIntent().getExtras();
+            if(extras == null)
+                extras = new Bundle();
+            if(getControlUpdate()) {
+                intent = extras.getBoolean("update", false)?  new Intent(SplashScreen.this, UpdateActivity.class) : new Intent(SplashScreen.this, RepositoriesActivity.class);
+                if(extras.getBoolean("update", false))
+                    intent.putExtra("update", true);
+
+            }else{
+                intent = new Intent(SplashScreen.this, UpdateActivity.class);
+                intent.putExtra("update", false);
+            }
             startActivity(intent);
             return;
+
         }
 
         Intent intentWebView = new Intent(SplashScreen.this, WebViewActivity.class);

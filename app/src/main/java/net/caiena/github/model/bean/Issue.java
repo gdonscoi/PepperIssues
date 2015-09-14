@@ -1,5 +1,7 @@
 package net.caiena.github.model.bean;
 
+import android.support.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -12,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @DatabaseTable(tableName = "issue")
-public class Issue extends AbstractDataProvider.Data implements IEntidade, Serializable {
+public class Issue extends AbstractDataProvider.Data implements IEntidade, Serializable, Comparable {
 
     @DatabaseField(id = true)
     public String id;
@@ -45,6 +47,10 @@ public class Issue extends AbstractDataProvider.Data implements IEntidade, Seria
     public Collection<IssueComment> commentList = new ArrayList<>();
 
     public User user;
+
+    @Expose
+    @DatabaseField
+    public int position;
 
     @Override
     public long getId() {
@@ -86,7 +92,13 @@ public class Issue extends AbstractDataProvider.Data implements IEntidade, Seria
         return false;
     }
 
-//    @DatabaseField
-//    public String ownerIssue = "";
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return ((Integer) this.position).compareTo(((Issue) o).position);
+    }
 
+    @Override
+    public boolean equals(Object object) {
+        return object != null && object instanceof Issue && ((Issue) object).id.equals(this.id);
+    }
 }

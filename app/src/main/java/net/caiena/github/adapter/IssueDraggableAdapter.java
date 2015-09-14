@@ -2,6 +2,7 @@ package net.caiena.github.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.view.ViewCompat;
@@ -25,10 +26,8 @@ import net.caiena.github.Util.AbstractDataProvider;
 import net.caiena.github.Util.DrawableUtils;
 import net.caiena.github.Util.ViewUtils;
 import net.caiena.github.activity.IssueDetailsActivity;
-import net.caiena.github.model.bean.Issue;
+import net.caiena.github.model.DAO.IssueDAO;
 import net.caiena.github.model.bean.Label;
-
-import java.util.ArrayList;
 
 public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAdapter.MyViewHolder> implements DraggableItemAdapter<IssueDraggableAdapter.MyViewHolder> {
 
@@ -46,7 +45,7 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
         public TextView titleIssue;
         public PredicateLayout containerLabels;
 
-        public MyViewHolder(View v,AbstractDataProvider mProvider) {
+        public MyViewHolder(View v, AbstractDataProvider mProvider) {
             super(v);
             mContainer = (FrameLayout) v.findViewById(R.id.container);
             relativeLayout = (RelativeLayout) mContainer.findViewById(R.id.container_item_issue);
@@ -62,12 +61,12 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
         @Override
         public void onClick(View view) {
             Intent i = new Intent(view.getContext(), IssueDetailsActivity.class);
-            i.putExtra("issue", ((IssueDataProvider.ConcreteData)mProvider.getItem(getAdapterPosition())).issue);
+            i.putExtra("issue", ((IssueDataProvider.ConcreteData) mProvider.getItem(getAdapterPosition())).issue);
             view.getContext().startActivity(i);
         }
     }
 
-    public IssueDraggableAdapter(AbstractDataProvider dataProvider,Context context) {
+    public IssueDraggableAdapter(AbstractDataProvider dataProvider, Context context) {
         this.context = context;
         mProvider = dataProvider;
         // DraggableItemAdapter requires stable ID, and also
@@ -89,7 +88,7 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         final View v = inflater.inflate(R.layout.item_issue_list, parent, false);
-        return new MyViewHolder(v,mProvider);
+        return new MyViewHolder(v, mProvider);
     }
 
     @Override
@@ -101,7 +100,7 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
         if (holder.containerLabels.getChildCount() > 0) {
             holder.containerLabels.removeAllViews();
         }
-        for (Label label : ((IssueDataProvider.ConcreteData)item.getObject()).issue.labels) {
+        for (Label label : ((IssueDataProvider.ConcreteData) item.getObject()).issue.labels) {
             labelText = new TextView(context);
             labelText.setPadding(5, 0, 5, 0);
             labelText.setSingleLine(true);
@@ -171,5 +170,27 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
     public ItemDraggableRange onGetItemDraggableRange(MyViewHolder holder, int position) {
         // no drag-sortable range specified
         return null;
+    }
+
+    public void saveOrderList() {
+        int listSize = getItemCount();
+        SQLiteDatabase db = null;
+        try {
+            db = IssueDAO.getInstance(context).getConnectionDataBase();
+            db.beginTransaction();
+            for (int i = 0; i < listSize; i++) {
+                if (((IssueDataProvider.ConcreteData) mProvider.getItem(i).getObject()).issue.position != i) {
+                    ((IssueDataProvider.ConcreteData) mProvider.getItem(i).getObject()).issue.position = i;
+                    IssueDAO.getInstance(context).createOrUpdate(((IssueDataProvider.ConcreteData) mProvider.getItem(i).getObject()).issue);
+                }
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            return;
+        } finally {
+            if (db != null) {
+                db.endTransaction();
+            }
+        }
     }
 }

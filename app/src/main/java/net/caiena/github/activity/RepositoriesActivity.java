@@ -1,10 +1,13 @@
 package net.caiena.github.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,7 +21,7 @@ import net.caiena.github.model.bean.Repository;
 import java.util.ArrayList;
 
 
-public class MainActivity extends BaseActivity {
+public class RepositoriesActivity extends BaseActivity {
 
     private RecyclerView listView;
     private TextView naoPossuiRepositorio;
@@ -56,11 +59,31 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == R.id.refresh) {
+            Intent intentWebView = new Intent(RepositoriesActivity.this, UpdateActivity.class);
+            intentWebView.putExtra("update" , true);
+            startActivity(intentWebView);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
     public void onBackPressed() {
     }
 
     private void refreshAdapter() {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        RepositoriesActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (repositories.isEmpty())

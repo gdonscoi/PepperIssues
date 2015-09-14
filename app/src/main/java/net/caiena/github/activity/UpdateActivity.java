@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import net.caiena.github.R;
 import net.caiena.github.Util.ActivityUpdatable;
+import net.caiena.github.Util.DownloadController;
 import net.caiena.github.Util.UpdateController;
 
 public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
@@ -26,13 +27,16 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
     private TextView textHtml;
     private Animation fadeInAnimation;
     private Context context;
-    private UpdateController updateController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
         context = this;
+
+        Bundle extras = getIntent().getExtras();
+        if(extras == null)
+            extras = new Bundle();
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
@@ -53,7 +57,14 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
 
         fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 
-        updateController = new UpdateController(getAcessToken(), progressBar, this);
+        if(!extras.getBoolean("update",false)) {
+            DownloadController downloadController = new DownloadController(getAcessToken(), progressBar, this);
+            downloadController.setCallback(this);
+            downloadController.execute();
+            return;
+        }
+
+        UpdateController updateController = new UpdateController(getAcessToken(), progressBar, this);
         updateController.setCallback(this);
         updateController.execute();
 

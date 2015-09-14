@@ -28,6 +28,7 @@ import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,7 @@ public class IssuesActivity extends BaseActivity {
     private ArrayList<Issue> issues;
     private int idRepository;
     private ProgressBar progressBar;
+    private IssueDraggableAdapter myItemAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,30 +51,18 @@ public class IssuesActivity extends BaseActivity {
         this.context = this;
         Bundle extras = getIntent().getExtras();
         idRepository = extras.getInt("idRepository");
-
         setTitle(extras.getString("nameRepository"));
 
         naoPossui = (TextView) findViewById(R.id.text_nao_possui_issue);
         progressBar = (ProgressBar) findViewById(R.id.progressBarListIssue);
-//        listView = (RecyclerView) findViewById(R.id.recycleViewListIssues);
-//        listView.addItemDecoration(new SpacesItemDecoration(getResources()));
-//        listView.setHasFixedSize(true);
-//
-//        ImageView overlay = (ImageView) findViewById(R.id.overlay);
-//        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-//        listView.setLayoutManager(mLayoutManager);
-//        listView.addOnItemTouchListener(new DragController(listView, overlay));
         issues = new ArrayList<>();
         listView = (RecyclerView) findViewById(R.id.recycleViewListIssues);
+
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
 
         final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
-
         listView.setLayoutManager(mLayoutManager);
         listView.setItemAnimator(animator);
-
-        // additional decorations
-        //noinspection StatementWithEmptyBody
         if (supportsViewElevation()) {
             // Lollipop or later has native drop shadow feature. ItemShadowDecorator is not required.
         } else {
@@ -105,6 +95,8 @@ public class IssuesActivity extends BaseActivity {
                         hashMapIssues.remove(issue.id);
                     }
                 }
+                if(!issues.isEmpty())
+                    Collections.sort(issues);
                 refreshAdapter();
             }
         }).start();
@@ -122,7 +114,7 @@ public class IssuesActivity extends BaseActivity {
                             (NinePatchDrawable) ContextCompat.getDrawable(context, R.drawable.material_shadow_z3));
 
                     IssueDataProvider issueDataProvider = new IssueDataProvider(issues);
-                    final IssueDraggableAdapter myItemAdapter = new IssueDraggableAdapter(issueDataProvider,context);
+                    myItemAdapter = new IssueDraggableAdapter(issueDataProvider,context);
                     RecyclerView.Adapter mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
 
                     listView.setAdapter(mWrappedAdapter);
@@ -135,5 +127,11 @@ public class IssuesActivity extends BaseActivity {
 
     private boolean supportsViewElevation() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
+    }
+
+    @Override
+    protected void onPause(){
+        myItemAdapter.saveOrderList();
+        super.onPause();
     }
 }

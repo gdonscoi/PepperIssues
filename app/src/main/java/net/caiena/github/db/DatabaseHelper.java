@@ -27,7 +27,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String DATABASE_FILE_NAME = "pepperissues";
 
     // versao do banco - qualquer alteracao de banco incremente no valor
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
     private Map<Class, Dao<IEntidade, Object>> daos = new HashMap<>();
 
@@ -85,7 +85,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     }
 
     public <T> Dao<T, Object> getDAO(Class<T> entidadeClass) {
-        Dao<T, Object> dao = null;
+        Dao<T, Object> dao;
         if (daos.get(entidadeClass) == null) {
             try {
                 dao = getDao(entidadeClass);
