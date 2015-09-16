@@ -18,7 +18,7 @@ import net.caiena.github.Util.ActivityUpdatable;
 import net.caiena.github.Util.DownloadController;
 import net.caiena.github.Util.UpdateController;
 
-public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
+public class DownloadActivity extends BaseActivity implements ActivityUpdatable {
 
     private ProgressBar progressBar;
     private TextView titleText;
@@ -27,6 +27,9 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
     private TextView textHtml;
     private Animation fadeInAnimation;
     private Context context;
+    private boolean flagUpdate;
+    private int typeUpdate;
+    private int idRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,10 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
         Bundle extras = getIntent().getExtras();
         if(extras == null)
             extras = new Bundle();
+
+        flagUpdate = extras.getBoolean("update",false);
+        typeUpdate = extras.getInt("typeUpdate");
+        idRepository = extras.getInt("idRepository" ,0);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setIndeterminate(true);
@@ -57,22 +64,22 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
 
         fadeInAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_in);
 
-        if(!extras.getBoolean("update",false)) {
-            DownloadController downloadController = new DownloadController(getAcessToken(), progressBar, this);
-            downloadController.setCallback(this);
-            downloadController.execute();
+        if(flagUpdate) {
+            UpdateController updateController = new UpdateController(getAcessToken(), progressBar, this,typeUpdate);
+            updateController.setCallback(this);
+            updateController.execute(idRepository);
             return;
         }
 
-        UpdateController updateController = new UpdateController(getAcessToken(), progressBar, this);
-        updateController.setCallback(this);
-        updateController.execute();
+        DownloadController downloadController = new DownloadController(getAcessToken(), progressBar, this);
+        downloadController.setCallback(this);
+        downloadController.execute();
 
     }
 
     @Override
     public void updateProgressBar(final int progress, final int max) {
-        UpdateActivity.this.runOnUiThread(new Runnable() {
+        DownloadActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (progressBar != null) {
@@ -86,7 +93,7 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
 
     @Override
     public void updateInfoActivity(final Bitmap circleBitmap, final String name, final String html) {
-        UpdateActivity.this.runOnUiThread(new Runnable() {
+        DownloadActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (circleBitmap != null) {
@@ -122,6 +129,10 @@ public class UpdateActivity extends BaseActivity implements ActivityUpdatable {
             @Override
             public void onClick(View v) {
                 finish();
+                if(flagUpdate) {
+                    getIntent().putExtra("typeUpdate" ,typeUpdate);
+                    getIntent().putExtra("idRepository", idRepository);
+                }
                 startActivity(getIntent());
             }
         });

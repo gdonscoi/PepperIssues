@@ -84,6 +84,15 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 
     }
 
+    @Override
+    public void onOpen(SQLiteDatabase db) {
+        super.onOpen(db);
+        if (!db.isReadOnly()) {
+            // Enable foreign key constraints
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
+    }
+
     public <T> Dao<T, Object> getDAO(Class<T> entidadeClass) {
         Dao<T, Object> dao;
         if (daos.get(entidadeClass) == null) {

@@ -43,6 +43,7 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
 
         public RelativeLayout relativeLayout;
         public TextView titleIssue;
+        public TextView ownerLogin;
         public PredicateLayout containerLabels;
 
         public MyViewHolder(View v, AbstractDataProvider mProvider) {
@@ -53,6 +54,7 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
             mDragHandle = mContainer.findViewById(R.id.drag_handle);
 
             titleIssue = (TextView) relativeLayout.findViewById(R.id.title_issue);
+            ownerLogin = (TextView) relativeLayout.findViewById(R.id.owner_issue);
             containerLabels = (PredicateLayout) relativeLayout.findViewById(R.id.container_label_issue);
             this.mProvider = mProvider;
             v.setOnClickListener(this);
@@ -94,8 +96,10 @@ public class IssueDraggableAdapter extends RecyclerView.Adapter<IssueDraggableAd
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
         AbstractDataProvider.Data item = mProvider.getItem(position);
-
-        holder.titleIssue.setText(((IssueDataProvider.ConcreteData) item.getObject()).issue.title);
+        holder.titleIssue.setText("#".concat(String.valueOf(((IssueDataProvider.ConcreteData) item.getObject()).issue.number))
+                                     .concat(" - ")
+                                     .concat(((IssueDataProvider.ConcreteData) item.getObject()).issue.title));
+        holder.ownerLogin.setText(((IssueDataProvider.ConcreteData) item.getObject()).issue.ownerLogin);
 
         if (holder.containerLabels.getChildCount() > 0) {
             holder.containerLabels.removeAllViews();

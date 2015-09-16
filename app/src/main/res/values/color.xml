@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="bg_item_normal_state">#fff0f0f0</color>
-    <color name="bg_item_dragging_state">#e3f2fd</color>
-    <color name="bg_item_dragging_active_state">#2196f3</color>
-    <color name="bg_item_swiping_state">#ffddddff</color>
+    <color name="bg_item_dragging_state">#ffffff</color>
+    <color name="bg_item_dragging_active_state">#20000000</color>
+    <color name="bg_item_swiping_state">#ffffff</color>
     <color name="bg_item_swiping_active_state">#ff9999ff</color>
 
     <color name="bg_group_item_normal_state">#ffddffdd</color>
@@ -12,7 +12,7 @@
     <color name="bg_group_item_expanded_pressed_state">#ff99cc99</color>
     <color name="bg_group_item_dragging_state">#ffeeccff</color>
     <color name="bg_group_item_dragging_active_state">#ffee99ff</color>
-    <color name="bg_group_item_swiping_state">#ffddccff</color>
+    <color name="bg_group_item_swiping_state">#ffffff</color>
     <color name="bg_group_item_swiping_active_state">#ffbb99ff</color>
 
     <color name="bg_swipe_item_neutral">#ffffffff</color>
@@ -21,5 +21,5 @@
     <color name="bg_swipe_group_item_left">#fff45f30</color>
     <color name="bg_swipe_group_item_right">#ff295db3</color>
 
-    <color name="snackbar_action_color_done">#ffccccff</color>
+    <color name="snackbar_action_color_done">#ffffff</color>
 </resources>

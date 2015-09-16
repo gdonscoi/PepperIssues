@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.caiena.github" >
+    package="net.caiena.github">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -9,11 +9,16 @@
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".activity.RepositoriesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            android:uiOptions="splitActionBarWhenNarrow">
+            <meta-data
+                android:name="android.support.UI_OPTIONS"
+                android:value="splitActionBarWhenNarrow" />
+        </activity>
         <activity
             android:name=".activity.WebViewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
@@ -23,7 +28,7 @@
             android:name=".activity.SplashScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_splash_screen"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,18 +41,15 @@
         <activity
             android:name=".activity.IssuesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_issues" >
-        </activity>
+            android:label="@string/title_activity_issues"/>
         <activity
-            android:name=".activity.UpdateActivity"
+            android:name=".activity.DownloadActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_update"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity
             android:name=".activity.IssueDetailsActivity"
-            android:label="@string/title_activity_issue_details" >
-        </activity>
+            android:label="@string/title_activity_issue_details"/>
     </application>
 
 </manifest>

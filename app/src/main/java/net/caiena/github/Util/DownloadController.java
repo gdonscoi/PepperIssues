@@ -8,8 +8,8 @@ import android.widget.ProgressBar;
 
 import net.caiena.github.GitHubController;
 import net.caiena.github.activity.RepositoriesActivity;
-import net.caiena.github.activity.UpdateActivity;
-import net.caiena.github.model.DAO.CommentDAO;
+import net.caiena.github.activity.DownloadActivity;
+import net.caiena.github.model.DAO.IssueCommentDAO;
 import net.caiena.github.model.DAO.IssueDAO;
 import net.caiena.github.model.DAO.IssueLabelDAO;
 import net.caiena.github.model.DAO.LabelDAO;
@@ -82,6 +82,7 @@ public class DownloadController extends AsyncTask<String, Integer, Boolean> {
                             issue.repository = repository;
                             issue.nameMilestone = milestone.title;
                             issue.position = startPosition;
+                            issue.ownerLogin = issue.user.login;
                             startPosition++;
 
                             if (issue.comments > 0) {
@@ -113,7 +114,7 @@ public class DownloadController extends AsyncTask<String, Integer, Boolean> {
             RepositoryDAO.getInstance(context).createOrUpdate(repositories);
             IssueDAO.getInstance(context).createOrUpdate(issues);
             LabelDAO.getInstance(context).createOrUpdate(new ArrayList<>(labelHashMap.values()));
-            CommentDAO.getInstance(context).createOrUpdate(comments);
+            IssueCommentDAO.getInstance(context).createOrUpdate(comments);
             IssueLabelDAO.getInstance(context).createOrUpdate(issueLabels);
 
             db.setTransactionSuccessful();
@@ -148,8 +149,8 @@ public class DownloadController extends AsyncTask<String, Integer, Boolean> {
         }
         Intent intentWebView = new Intent(context, RepositoriesActivity.class);
         context.startActivity(intentWebView);
-        ((UpdateActivity) context).setControlUpdate(true);
-        ((UpdateActivity) context).finish();
+        ((DownloadActivity) context).setFirstDownload(false);
+        ((DownloadActivity) context).finish();
     }
 
 }

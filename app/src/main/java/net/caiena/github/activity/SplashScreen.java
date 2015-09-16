@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import net.caiena.github.R;
+import net.caiena.github.Util.UpdateController;
 
 public class SplashScreen extends BaseActivity {
 
@@ -14,27 +15,22 @@ public class SplashScreen extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        if (!getAcessToken().trim().equals("")) {
-            Intent intent;
-            Bundle extras = getIntent().getExtras();
-            if(extras == null)
-                extras = new Bundle();
-            if(getControlUpdate()) {
-                intent = extras.getBoolean("update", false)?  new Intent(SplashScreen.this, UpdateActivity.class) : new Intent(SplashScreen.this, RepositoriesActivity.class);
-                if(extras.getBoolean("update", false))
-                    intent.putExtra("update", true);
-
-            }else{
-                intent = new Intent(SplashScreen.this, UpdateActivity.class);
-                intent.putExtra("update", false);
-            }
-            startActivity(intent);
+        if (getAcessToken().trim().equals("")) {
+            Intent intentWebView = new Intent(SplashScreen.this, WebViewActivity.class);
+            startActivityForResult(intentWebView, WEBVIEW_ACTIVITY_REQUEST);
             return;
-
         }
 
-        Intent intentWebView = new Intent(SplashScreen.this, WebViewActivity.class);
-        startActivityForResult(intentWebView, WEBVIEW_ACTIVITY_REQUEST);
+        Intent intent;
+        if (isFirstDownload()) {
+            intent = new Intent(SplashScreen.this, DownloadActivity.class);
+            intent.putExtra("update", false);
+            startActivity(intent);
+            return;
+        }
+
+        intent = new Intent(SplashScreen.this, RepositoriesActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -42,7 +38,7 @@ public class SplashScreen extends BaseActivity {
         if (requestCode == WEBVIEW_ACTIVITY_REQUEST) {
             if (resultCode == RESULT_OK) {
                 setAcessToken(data.getStringExtra("access_token"));
-                Intent intentWebView = new Intent(SplashScreen.this, UpdateActivity.class);
+                Intent intentWebView = new Intent(SplashScreen.this, DownloadActivity.class);
                 startActivity(intentWebView);
             } else if (resultCode == RESULT_CANCELED) {
                 Intent intentWebView = new Intent(SplashScreen.this, WebViewActivity.class);

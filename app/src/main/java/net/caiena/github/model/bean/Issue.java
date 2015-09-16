@@ -19,7 +19,7 @@ public class Issue extends AbstractDataProvider.Data implements IEntidade, Seria
     @DatabaseField(id = true)
     public String id;
 
-    @DatabaseField(columnName = "repository_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
+    @DatabaseField(columnName = "repository_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1, columnDefinition = "integer references repository(id) on delete cascade")
     public Repository repository;
 
     @DatabaseField
@@ -47,6 +47,10 @@ public class Issue extends AbstractDataProvider.Data implements IEntidade, Seria
     public Collection<IssueComment> commentList = new ArrayList<>();
 
     public User user;
+
+    @Expose
+    @DatabaseField
+    public String ownerLogin;
 
     @Expose
     @DatabaseField

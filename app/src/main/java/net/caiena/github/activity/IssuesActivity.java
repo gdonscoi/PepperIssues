@@ -1,12 +1,15 @@
 package net.caiena.github.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,8 +21,7 @@ import com.h6ah4i.android.widget.advrecyclerview.decoration.SimpleListDividerDec
 import com.h6ah4i.android.widget.advrecyclerview.draggable.RecyclerViewDragDropManager;
 
 import net.caiena.github.R;
-import net.caiena.github.Util.AbstractDataProvider;
-import net.caiena.github.adapter.AdapterIssues;
+import net.caiena.github.Util.UpdateController;
 import net.caiena.github.adapter.IssueDataProvider;
 import net.caiena.github.adapter.IssueDraggableAdapter;
 import net.caiena.github.model.DAO.IssueLabelDAO;
@@ -28,7 +30,6 @@ import net.caiena.github.model.bean.IssueLabel;
 import net.caiena.github.model.bean.Label;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +96,7 @@ public class IssuesActivity extends BaseActivity {
                         hashMapIssues.remove(issue.id);
                     }
                 }
-                if(!issues.isEmpty())
+                if (!issues.isEmpty())
                     Collections.sort(issues);
                 refreshAdapter();
             }
@@ -114,7 +115,7 @@ public class IssuesActivity extends BaseActivity {
                             (NinePatchDrawable) ContextCompat.getDrawable(context, R.drawable.material_shadow_z3));
 
                     IssueDataProvider issueDataProvider = new IssueDataProvider(issues);
-                    myItemAdapter = new IssueDraggableAdapter(issueDataProvider,context);
+                    myItemAdapter = new IssueDraggableAdapter(issueDataProvider, context);
                     RecyclerView.Adapter mWrappedAdapter = mRecyclerViewDragDropManager.createWrappedAdapter(myItemAdapter);
 
                     listView.setAdapter(mWrappedAdapter);
@@ -125,12 +126,34 @@ public class IssuesActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_issues, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        int id = menuItem.getItemId();
+        if (id == R.id.refreshIssues) {
+            Intent intentWebView = new Intent(IssuesActivity.this, DownloadActivity.class);
+            intentWebView.putExtra("update" , true);
+            intentWebView.putExtra("typeUpdate", UpdateController.TYPE_UPDATE_ISSUES);
+            intentWebView.putExtra("idRepository", idRepository);
+            startActivity(intentWebView);
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
     private boolean supportsViewElevation() {
         return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP);
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         myItemAdapter.saveOrderList();
         super.onPause();
     }

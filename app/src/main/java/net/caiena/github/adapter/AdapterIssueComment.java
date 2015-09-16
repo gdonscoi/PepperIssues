@@ -2,6 +2,7 @@ package net.caiena.github.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +10,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import net.caiena.github.R;
-import net.caiena.github.model.bean.IssueComment;
 import net.caiena.github.model.bean.Issue;
+import net.caiena.github.model.bean.IssueComment;
 
 import java.util.ArrayList;
+
+import in.uncod.android.bypass.Bypass;
 
 public class AdapterIssueComment extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<IssueComment> comments;
     private Issue issue;
     private Context context;
+    private Bypass bypass;
     public static final int CONTENT_ISSUE_TYPE = 0;
     public static final int CONTENT_COMMENT_TYPE = 1;
 
@@ -60,10 +64,11 @@ public class AdapterIssueComment extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    public AdapterIssueComment(ArrayList<IssueComment> comments,Issue issue, Context context) {
+    public AdapterIssueComment(ArrayList<IssueComment> comments, Issue issue, Context context) {
         this.context = context;
         this.comments = comments;
         this.issue = issue;
+        this.bypass= new Bypass(context);
     }
 
     @Override
@@ -89,21 +94,23 @@ public class AdapterIssueComment extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ViewHolderComment) {
-            ((ViewHolderComment) holder).bodyComment.setText(comments.get(position-1).body);
-            ((ViewHolderComment) holder).ownerComment.setText(comments.get(position-1).ownerComment);
+            ((ViewHolderComment) holder).bodyComment.setText(bypass.markdownToSpannable(comments.get(position - 1).body));
+            ((ViewHolderComment) holder).bodyComment.setMovementMethod(LinkMovementMethod.getInstance());
+            ((ViewHolderComment) holder).ownerComment.setText(comments.get(position - 1).ownerComment);
             return;
         }
 
         ((ViewHolderIssue) holder).titleIssue.setText(issue.title);
-        ((ViewHolderIssue) holder).bodyIssue.setText(issue.body);
-//        ((ViewHolderIssue) holder).ownerIssue.setText(issue.ownerIssue);
+        ((ViewHolderIssue) holder).bodyIssue.setText(bypass.markdownToSpannable(issue.body));
+        ((ViewHolderIssue) holder).bodyIssue.setMovementMethod(LinkMovementMethod.getInstance());
+        ((ViewHolderIssue) holder).ownerIssue.setText(issue.ownerLogin);
 
     }
 
 
     @Override
     public int getItemCount() {
-        return (comments.size() + 1 );
+        return (comments.size() + 1);
     }
 
 }

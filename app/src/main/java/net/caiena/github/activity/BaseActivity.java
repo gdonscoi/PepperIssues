@@ -70,13 +70,13 @@ public class BaseActivity extends AppCompatActivity {
         access_token = acessToken;
     }
 
-    public boolean getControlUpdate() {
-        return prefUsuario.getBoolean("control_update", false);
+    public boolean isFirstDownload() {
+        return prefUsuario.getBoolean("first_download", true);
     }
 
-    public void setControlUpdate(boolean controlUpdate) {
+    public void setFirstDownload(boolean controlUpdate) {
         SharedPreferences.Editor editor = prefUsuario.edit();
-        editor.putBoolean("control_update", controlUpdate);
+        editor.putBoolean("first_download", controlUpdate);
         editor.apply();
     }
 

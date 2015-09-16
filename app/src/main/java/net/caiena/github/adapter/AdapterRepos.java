@@ -24,6 +24,8 @@ public class AdapterRepos extends RecyclerView.Adapter<AdapterRepos.ViewHolder> 
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView nameRepo;
+        public TextView descriptionRepo;
+        public TextView ownerRepo;
         public ImageView statusRepo;
         public RelativeLayout container;
         private ArrayList<Repository> repositories;
@@ -32,6 +34,8 @@ public class AdapterRepos extends RecyclerView.Adapter<AdapterRepos.ViewHolder> 
             super(v);
             container = (RelativeLayout) v.findViewById(R.id.container_item_repo);
             nameRepo = (TextView) container.findViewById(R.id.name_repo);
+            descriptionRepo = (TextView) container.findViewById(R.id.description_repo);
+            ownerRepo = (TextView) container.findViewById(R.id.owner_repo);
             statusRepo = (ImageView) container.findViewById(R.id.status_repo);
             this.repositories = repositories;
             v.setOnClickListener(this);
@@ -64,6 +68,11 @@ public class AdapterRepos extends RecyclerView.Adapter<AdapterRepos.ViewHolder> 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.nameRepo.setText(repositories.get(position).nameFull);
+        if(!repositories.get(position).description.trim().equals("")) {
+            holder.descriptionRepo.setVisibility(View.VISIBLE);
+            holder.descriptionRepo.setText(repositories.get(position).description);
+        }
+        holder.ownerRepo.setText(repositories.get(position).ownerLogin);
         if (repositories.get(position).isPrivate)
             holder.statusRepo.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.lock_image));
         else

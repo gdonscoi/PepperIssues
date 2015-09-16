@@ -20,7 +20,7 @@ public class IssueLabel implements IEntidade, Serializable {
     @DatabaseField(id = true)
     public String id;
 
-    @DatabaseField(columnName = "issue_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)
+    @DatabaseField(columnName = "issue_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 2)
     public Issue issue;
 
     @DatabaseField(columnName = "label_id", foreign = true, foreignAutoRefresh = true, maxForeignAutoRefreshLevel = 1)

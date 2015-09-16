@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/text_body_issue_comment"
@@ -14,7 +15,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:textSize="18sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/text_owner_issue_comment"
@@ -25,5 +26,5 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:textSize="12sp" />
+        android:textSize="13sp" />
 </RelativeLayout>

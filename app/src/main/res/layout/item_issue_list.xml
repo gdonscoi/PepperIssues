@@ -7,13 +7,6 @@
     android:clickable="true"
     android:foreground="?attr/selectableItemBackground">
 
-    <View
-        android:id="@+id/drag_handle"
-        android:layout_width="32dp"
-        android:layout_height="match_parent"
-        android:background="#20000000"
-        android:layout_gravity="right|top"/>
-
     <RelativeLayout
         android:id="@+id/container_item_issue"
         android:layout_width="match_parent"
@@ -29,17 +22,37 @@
             android:layout_marginTop="10dp"
             android:ellipsize="end"
             android:maxLines="3"
-            android:textSize="18sp"
+            android:text="IUDHuaiauis hiuafshh asuui hua oio wOIJOFOIW QHOIOIFAW OHIIUA HIUIUHF HUHO WFOIOIHV IOAEFH OIHOIAEF HOIA EOHI"
+            android:textColor="#696969"
+            android:textSize="16sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/owner_issue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="40dp"
+            android:text="gdonscoi"
+            android:layout_below="@id/title_issue"
+            android:textColor="#696969"
+            android:textSize="13sp"/>
 
         <net.caiena.github.adapter.PredicateLayout
             android:id="@+id/container_label_issue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/title_issue"
+            android:layout_below="@id/owner_issue"
             android:layout_marginTop="15dp"
             android:paddingLeft="10dp"
             android:paddingRight="40dp" />
 
     </RelativeLayout>
+
+    <View
+        android:id="@+id/drag_handle"
+        android:layout_width="32dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right|top"
+        android:background="#20000000" />
 </FrameLayout>

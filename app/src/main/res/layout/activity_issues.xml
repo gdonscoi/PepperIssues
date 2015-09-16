@@ -32,7 +32,8 @@
         android:layout_below="@id/progressBarListIssue"
         android:layout_margin="0dp"
         android:padding="0dp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:background="#ffffff"/>
 
     <FrameLayout
         android:layout_width="match_parent"

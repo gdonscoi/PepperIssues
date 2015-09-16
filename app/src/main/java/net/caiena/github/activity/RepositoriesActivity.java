@@ -3,7 +3,6 @@ package net.caiena.github.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -13,6 +12,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import net.caiena.github.R;
+import net.caiena.github.Util.UpdateController;
 import net.caiena.github.adapter.AdapterRepos;
 import net.caiena.github.adapter.SpacesItemDecoration;
 import net.caiena.github.model.DAO.RepositoryDAO;
@@ -68,9 +68,10 @@ public class RepositoriesActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
-        if (id == R.id.refresh) {
-            Intent intentWebView = new Intent(RepositoriesActivity.this, UpdateActivity.class);
+        if (id == R.id.refreshRepositories) {
+            Intent intentWebView = new Intent(RepositoriesActivity.this, DownloadActivity.class);
             intentWebView.putExtra("update" , true);
+            intentWebView.putExtra("typeUpdate", UpdateController.TYPE_UPDATE_REPOSITORIES);
             startActivity(intentWebView);
             finish();
             return true;

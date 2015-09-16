@@ -31,7 +31,7 @@ public class IssueDetailsActivity extends BaseActivity {
 
         Bundle extras = getIntent().getExtras();
         issue = (Issue) extras.get("issue");
-        setTitle("#" + (issue != null ? issue.number : 0));
+        setTitle(issue != null ? issue.repository.nameFull.concat("/issues/").concat(String.valueOf(issue.number)) : "");
         comments = new ArrayList<>();
 
         progressBar = (ProgressBar) findViewById(R.id.progressBarListComment);

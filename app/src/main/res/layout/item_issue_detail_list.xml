@@ -4,7 +4,8 @@
     android:id="@+id/container_issue_detail_title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff">
+    android:background="#ffffff"
+    android:paddingBottom="10dp">
 
     <TextView
         android:id="@+id/text_title_issue"
@@ -13,9 +14,10 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="10dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000"/>
 
     <TextView
         android:id="@+id/text_body_issue"
@@ -24,8 +26,8 @@
         android:layout_below="@id/text_title_issue"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:textSize="18sp" />
+        android:layout_marginTop="10dp"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/text_owner_issue"
@@ -36,5 +38,5 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:textSize="12sp" />
+        android:textSize="13sp" />
 </RelativeLayout>
