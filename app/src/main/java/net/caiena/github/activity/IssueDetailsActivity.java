@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -31,6 +32,8 @@ public class IssueDetailsActivity extends BaseActivity {
 
         Bundle extras = getIntent().getExtras();
         issue = (Issue) extras.get("issue");
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setTitle(issue != null ? issue.repository.nameFull.concat("/issues/").concat(String.valueOf(issue.number)) : "");
         comments = new ArrayList<>();
 

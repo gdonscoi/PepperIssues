@@ -2,12 +2,16 @@ package net.caiena.github.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -52,6 +56,8 @@ public class IssuesActivity extends BaseActivity {
         this.context = this;
         Bundle extras = getIntent().getExtras();
         idRepository = extras.getInt("idRepository");
+
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         setTitle(extras.getString("nameRepository"));
 
         naoPossui = (TextView) findViewById(R.id.text_nao_possui_issue);
@@ -130,6 +136,12 @@ public class IssuesActivity extends BaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_issues, menu);
+
+        Drawable drawable = menu.findItem(R.id.refreshIssues).getIcon();
+
+        drawable = DrawableCompat.wrap(drawable);
+        DrawableCompat.setTint(drawable, Color.parseColor("#ffffff"));
+        menu.findItem(R.id.refreshIssues).setIcon(drawable);
         return true;
     }
 

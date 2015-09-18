@@ -1,8 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container_issue_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#595959">
+    android:background="?attr/colorPrimary">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="?attr/colorPrimary"
+        app:titleTextColor="#ffffff"/>
 
     <ProgressBar
         android:id="@+id/progressBarListComment"
@@ -12,7 +21,8 @@
         android:layout_marginLeft="0dp"
         android:layout_marginRight="0dp"
         android:layout_marginTop="0dp"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        android:layout_below="@id/toolbar"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycleViewListComment"
